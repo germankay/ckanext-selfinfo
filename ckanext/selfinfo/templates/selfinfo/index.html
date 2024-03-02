@@ -1,0 +1,134 @@
+{% extends "admin/base.html" %}
+
+{% block primary_content_inner %}
+<div class="">
+    {% if status_show %}
+    <h2>
+        System Information
+    </h2>
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">System</th>
+                    <th scope="col">Python Version</th>
+                    <th scope="col">RAM Usage %</th>
+                    <th scope="col">RAM Usage GB</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ data.platform_info.platform }}</td>
+                    <td>{{ data.platform_info.python_version }}</td>
+                    <td>{{ data.ram_usage.precent_usage }}%</td>
+                    <td>{{ data.ram_usage.used_ram }}GB</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+    <h2>
+        CKAN Information
+    </h2>
+    <div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Site Title</th>
+                    <th scope="col">CKAN Version</th>
+                    <th scope="col">Default Language</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ status_show.site_title }}</td>
+                    <td>{{ status_show.ckan_version }}</td>
+                    <td>{{ status_show.locale_default }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#extensionsCollapse"
+                aria-expanded="false" aria-controls="collapseExample">
+                {{ 'Extensions' }}
+            </button>
+        </p>
+        <div class="collapse" id="extensionsCollapse">
+            <div class="card card-body">
+                <ul class="list-group">
+                    {% for extension in status_show.extensions %}
+                    <li class="list-group-item">
+                        {{ extension }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="d-flex justify-content-between">
+        <h2>
+            Python Packages
+        </h2>
+
+        <form method="POST" class="">
+            <button type="submit" name="force-reset" value="True" class="btn btn-primary">
+                {{ _("Update last check") }}
+            </button>
+        </form>
+    </div>
+
+    {% for group in data.groups %}
+    <p>
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#{{group}}Collapse"
+            aria-expanded="false" aria-controls="collapseExample">
+            {{ group|upper }}
+        </button>
+    </p>
+    <div class="collapse" id="{{group}}Collapse">
+        <div class="card card-body">
+            <ul class="list-group">
+
+                <li class="list-group-item">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Current Version</th>
+                                <th scope="col">Possible Version</th>
+                                <th scope="col">Last Checked</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for module in data.groups[group] %}
+                                {% set values = data.groups[group][module] %}
+                                {% if values.name %}
+                                    <tr>
+                                        <td>
+                                            {{ values.name }}
+                                        </td>
+                                        <td>{{ values.current_version }}</td>
+                                        <td>
+                                            {{ values.latest_version }}
+                                            {% if values.current_version != values.latest_version %}
+                                                <i class="fas fa-exclamation-triangle text-warning"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {{ h.render_datetime(values.updated) }}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    {% endfor %}
+</div>
+{% endblock %}
