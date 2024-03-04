@@ -71,12 +71,6 @@
         <h2>
             Python Packages
         </h2>
-
-        <form method="POST" class="">
-            <button type="submit" name="force-reset" value="True" class="btn btn-primary">
-                {{ _("Update last check") }}
-            </button>
-        </form>
     </div>
 
     {% for group in data.groups %}
@@ -91,7 +85,7 @@
             <ul class="list-group">
 
                 <li class="list-group-item">
-                    <table class="table">
+                    <table class="table" data-module="reset-module-last-check">
                         <thead>
                             <tr>
                                 <th scope="col">Name</th>
@@ -105,18 +99,21 @@
                                 {% set values = data.groups[group][module] %}
                                 {% if values.name %}
                                     <tr>
-                                        <td>
+                                        <td class="td-{{ values.name }}-selfinfo-name">
                                             {{ values.name }}
                                         </td>
-                                        <td>{{ values.current_version }}</td>
-                                        <td>
+                                        <td class="td-{{ values.name }}-selfinfo-curVersion">{{ values.current_version }}</td>
+                                        <td class="td-{{ values.name }}-selfinfo-latestVersion">
                                             {{ values.latest_version }}
                                             {% if values.current_version != values.latest_version %}
                                                 <i class="fas fa-exclamation-triangle text-warning"></i>
                                             {% endif %}
                                         </td>
-                                        <td>
+                                        <td class="td-{{ values.name }}-selfinfo-updated">
                                             {{ h.render_datetime(values.updated) }}
+                                            <button name="force-reset" data-target="{{ values.name }}" class="force-reset-selfinfo btn btn-primary">
+                                                <i class="fas fa-sync-alt"></i>
+                                            </button>    
                                         </td>
                                     </tr>
                                 {% endif %}
