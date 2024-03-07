@@ -44,11 +44,3 @@ def update_last_module_check(
 
         return result
     return {}
-
-
-def update_all_modules_check(
-    context: types.Context,
-    data_dict: dict[str, Any],
-) -> dict[str, Any]:
-    data = tk.get_action("get_selfinfo")({}, {"force-reset": data_dict.get("force-reset")})
-    return data

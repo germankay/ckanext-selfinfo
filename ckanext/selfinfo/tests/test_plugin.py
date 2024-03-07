@@ -1,3 +1,6 @@
+import pytest
+
+from ckan.plugins import plugin_loaded
 """
 Tests for plugin.py.
 

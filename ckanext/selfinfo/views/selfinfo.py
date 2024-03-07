@@ -30,15 +30,6 @@ class SelfinfoView(MethodView):
             "status_show": status_show,
             }
         )
-    
-    def post(self):
-        form_data = parse_params(tk.request.form)
-
-        tk.get_action("update_all_modules_check")({"ignore_auth": True}, {
-            "force-reset": tk.asbool(form_data.get('force-reset', False)),
-            })
-        
-        return tk.redirect_to("selfinfo.index")
 
 
 selfinfo.add_url_rule(
