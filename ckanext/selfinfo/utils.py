@@ -5,10 +5,12 @@ import requests
 import psutil
 from psutil._common import bytes2human
 import platform
+import git
 from datetime import datetime
 import importlib_metadata as imetadata
 
 from ckan.lib.redis import connect_to_redis, Redis
+import ckan.plugins.toolkit as tk
 
 
 REDIS_SUFFIX: Literal["_selfinfo"] = "_selfinfo"
@@ -89,3 +91,49 @@ def get_platform_info() -> dict[str, Any]:
         "python_version": platform.python_version(),
         "platform": platform.platform(),
     }
+
+
+def gather_git_info():
+    app_working_path = tk.config.get('ckan.selfinfo.app_working_path')
+    git_repos = tk.config.get('ckan.selfinfo.git_repos', '')
+    
+    repos: dict[str, git.Repo] = {repo: get_git_repo(app_working_path + '/' + repo) for repo in[
+        "ckan",
+        *git_repos.strip().split(" ")
+    ]}
+
+    repos_info: list[dict[str,Any]] = []
+    for name, repo in repos.items():
+
+        commit, branch = repo.head.object.name_rev.strip().split(" ")
+        short_sha: str = repo.git.rev_parse(commit, short=True)
+        on = 'branch'
+
+        if repo.head.is_detached and branch.startswith("remotes/"):
+            branch = short_sha
+            on = 'commit'
+        elif repo.head.is_detached and branch.startswith("tags/"):
+            on = 'tag'
+        elif repo.head.is_detached and (not branch.startswith("tags/") and not branch.startswith("remotes/")):
+            branch = short_sha
+            on = 'commit'
+
+        repos_info.append({
+            "name": name,
+            "branch": branch,
+            "commit": short_sha,
+            "on": on,
+            "remotes": [
+                {
+                    "name": remote.name,
+                    "url": remote.url,
+                    } for remote in repo.remotes
+                ]
+        })
+
+    return repos_info
+
+
+def get_git_repo(path):
+    repo = git.Repo(path)
+    return repo

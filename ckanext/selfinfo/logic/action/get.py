@@ -21,9 +21,11 @@ def get_selfinfo(
     groups: dict[str, Any] = selfutils.get_python_modules_info(
         force_reset=data_dict.get("force-reset", False),
     )
+    git_info = selfutils.gather_git_info()
 
     return {
         "groups": groups,
         "platform_info": platform_info,
-        "ram_usage": ram_usage
+        "ram_usage": ram_usage,
+        "git_info": git_info,
     }
