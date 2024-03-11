@@ -17,8 +17,8 @@ updated_path: str = "/".join(current_path)
 
 @pytest.mark.ckan_config("ckan.plugins", "selfinfo")
 @pytest.mark.usefixtures("with_plugins", "clean_db")
-@pytest.mark.ckan_config("ckan.selfinfo.app_working_path", updated_path)
-@pytest.mark.ckan_config("ckan.selfinfo.git_repos", "ckan ckanext-selfinfo")
+@pytest.mark.ckan_config("ckan.selfinfo.ckan_repos_path", updated_path)
+@pytest.mark.ckan_config("ckan.selfinfo.ckan_repos", "ckan ckanext-selfinfo")
 class TestGET:
     def test_get_selfinfo(self):
         user = factories.User()

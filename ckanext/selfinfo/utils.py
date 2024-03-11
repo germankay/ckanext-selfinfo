@@ -94,42 +94,43 @@ def get_platform_info() -> dict[str, Any]:
 
 
 def gather_git_info():
-    app_working_path = tk.config.get('ckan.selfinfo.app_working_path')
-    git_repos = tk.config.get('ckan.selfinfo.git_repos', '')
-    
-    repos: dict[str, git.Repo] = {repo: get_git_repo(app_working_path + '/' + repo) for repo in[
-        "ckan",
-        *git_repos.strip().split(" ")
-    ]}
-
+    ckan_repos_path = tk.config.get('ckan.selfinfo.ckan_repos_path')
+    ckan_repos = tk.config.get('ckan.selfinfo.ckan_repos', '')
     repos_info: list[dict[str,Any]] = []
-    for name, repo in repos.items():
+    
+    if ckan_repos_path:
+        repos: dict[str, git.Repo] = {repo: get_git_repo(ckan_repos_path + '/' + repo) for repo in[
+            "ckan",
+            *ckan_repos.strip().split(" ")
+        ]}
 
-        commit, branch = repo.head.object.name_rev.strip().split(" ")
-        short_sha: str = repo.git.rev_parse(commit, short=True)
-        on = 'branch'
+        for name, repo in repos.items():
 
-        if repo.head.is_detached and branch.startswith("remotes/"):
-            branch = short_sha
-            on = 'commit'
-        elif repo.head.is_detached and branch.startswith("tags/"):
-            on = 'tag'
-        elif repo.head.is_detached and (not branch.startswith("tags/") and not branch.startswith("remotes/")):
-            branch = short_sha
-            on = 'commit'
+            commit, branch = repo.head.object.name_rev.strip().split(" ")
+            short_sha: str = repo.git.rev_parse(commit, short=True)
+            on = 'branch'
 
-        repos_info.append({
-            "name": name,
-            "branch": branch,
-            "commit": short_sha,
-            "on": on,
-            "remotes": [
-                {
-                    "name": remote.name,
-                    "url": remote.url,
-                    } for remote in repo.remotes
-                ]
-        })
+            if repo.head.is_detached and branch.startswith("remotes/"):
+                branch = short_sha
+                on = 'commit'
+            elif repo.head.is_detached and branch.startswith("tags/"):
+                on = 'tag'
+            elif repo.head.is_detached and (not branch.startswith("tags/") and not branch.startswith("remotes/")):
+                branch = short_sha
+                on = 'commit'
+
+            repos_info.append({
+                "name": name,
+                "head": branch,
+                "commit": short_sha,
+                "on": on,
+                "remotes": [
+                    {
+                        "name": remote.name,
+                        "url": remote.url,
+                        } for remote in repo.remotes
+                    ]
+            })
 
     return repos_info
 

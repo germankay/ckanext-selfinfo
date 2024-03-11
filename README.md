@@ -1,6 +1,6 @@
 # ckanext-selfinfo
 
-This extension is built to represent a basic information about the running CKAN Application.
+This extension is built to represent a basic information about the running CKAN Application accessible only to admins.
 
 On CKAN admin page `/ckan-admin/selfinfo`, admin can see such information as:
 * System Information
@@ -13,6 +13,12 @@ On CKAN admin page `/ckan-admin/selfinfo`, admin can see such information as:
     - CKAN Version
     - Default Language
     - Extensions that enabled on the portal
+* GIT Information (Optional, see Config Settings section)
+    - Project
+    - Head
+    - Based on
+    - Commit
+    - Remotes
 * Python Information
     - Provides information about CKAN Core, CKAN Extensions, Python installed packages. It shows their current version and latest version.
 
@@ -57,6 +63,13 @@ do:
     cd ckanext-selfinfo
     python setup.py develop
     pip install -r dev-requirements.txt
+
+
+## Config Settings
+
+`ckan.selfinfo.ckan_repos_path` - Path to the src folder where CKAN and CKAN Extensions stored at the environment. While provided additional GIT Infromation will be provided.
+
+`ckan.selfinfo.ckan_repos` - List of CKAN Extension folders separated by space (ckanext-scheming ckanext-spatial ckanext-xloader). By default, if `ckan.selfinfo.ckan_repos_path` is provided only CKAN Core will be shown, but this can be extended by providing CKAN Extenstions to the list using this setting.
 
 
 ## Tests
