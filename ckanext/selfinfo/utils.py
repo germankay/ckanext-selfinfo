@@ -102,7 +102,7 @@ def gather_git_info():
         repos: dict[str, git.Repo] = {repo: get_git_repo(ckan_repos_path + '/' + repo) for repo in[
             "ckan",
             *ckan_repos.strip().split(" ")
-        ]}
+        ] if repo}
 
         for name, repo in repos.items():
 
