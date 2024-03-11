@@ -105,14 +105,14 @@
                                 <td>{{ data.commit }}</td>
                                 <td>
                                     {% for remote in data.remotes %}
-                                        <p>
+                                        <div class="mb-2">
                                             <div>
                                                 Name: {{ remote.name }}
                                             </div>
                                             <div>
                                                 URL: <a href="{{ remote.url }}" target="_blank">{{ remote.url }}</a>
                                             </div>
-                                        </p>
+                                        </div>
                                     {% endfor %}
                                 </td>
                             </tr>

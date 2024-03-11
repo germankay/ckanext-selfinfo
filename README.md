@@ -69,8 +69,10 @@ do:
 
 `ckan.selfinfo.ckan_repos_path` - Path to the src folder where CKAN and CKAN Extensions stored at the environment. While provided additional GIT Infromation will be provided.
 
-`ckan.selfinfo.ckan_repos` - List of CKAN Extension folders separated by space (ckanext-scheming ckanext-spatial ckanext-xloader). By default, if `ckan.selfinfo.ckan_repos_path` is provided only CKAN Core will be shown, but this can be extended by providing CKAN Extenstions to the list using this setting.
+`ckan.selfinfo.ckan_repos` - List of CKAN Extension folders separated by space (ckanext-scheming ckanext-spatial ckanext-xloader). By default, if `ckan.selfinfo.ckan_repos_path` is provided only CKAN Core will be shown, but this can be extended by providing CKAN Extenstions to the list using this setting. Make sure to read the Note under this options before adding it, as it may cause 500 error, if not configured right.
 
+#### NOTE!
+For Linux, keep in mind that the added folder in `ckan.selfinfo.ckan_repos_path` should have the same owner as the one that runs the application (e.g. if the application runs from `ckan` User in the system, then ckanext-scheming folder owner should be `ckan`), otherwise there will be an error related to ownership of the repository.
 
 ## Tests
 
