@@ -15,12 +15,16 @@ selfinfo = Blueprint("selfinfo", __name__, url_prefix="/ckan-admin")
 
 class SelfinfoView(MethodView):
     def get(self):
-        context: types.Context = cast(types.Context, {
-            "model": model,
-            "user": tk.current_user.name,
-            "auth_user_obj": tk.current_user
-        })
-        tk.check_access(u'sysadmin', context)
+        try:
+            context: types.Context = cast(types.Context, {
+                "model": model,
+                "user": tk.current_user.name,
+                "auth_user_obj": tk.current_user
+            })
+
+            tk.check_access(u'sysadmin', context)
+        except tk.NotAuthorized:
+            tk.abort(404)
         
         data: dict[str, Any] = tk.get_action("get_selfinfo")({}, {})
         status_show: dict[str, Any] = tk.get_action("status_show")({}, {})
