@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import Literal, Any, Mapping
 import requests
 import psutil
@@ -95,14 +96,17 @@ def get_platform_info() -> dict[str, Any]:
 
 def gather_git_info():
     ckan_repos_path = tk.config.get('ckan.selfinfo.ckan_repos_path')
-    ckan_repos = tk.config.get('ckan.selfinfo.ckan_repos', '')
     repos_info: list[dict[str,Any]] = []
-    
     if ckan_repos_path:
-        repos: dict[str, git.Repo] = {repo: get_git_repo(ckan_repos_path + '/' + repo) for repo in[
-            "ckan",
-            *ckan_repos.strip().split(" ")
-        ] if repo}
+        ckan_repos = tk.config.get('ckan.selfinfo.ckan_repos', '')
+        list_repos = ckan_repos.strip().split(" ") if \
+            ckan_repos else [
+                name for name in os.listdir(
+                    ckan_repos_path) if os.path.isdir(
+                        os.path.join(ckan_repos_path, name))
+        ]
+        repos: dict[str, git.Repo] = {
+            repo: get_git_repo(ckan_repos_path + '/' + repo) for repo in list_repos if repo}
 
         for name, repo in repos.items():
 
@@ -115,7 +119,8 @@ def gather_git_info():
                 on = 'commit'
             elif repo.head.is_detached and branch.startswith("tags/"):
                 on = 'tag'
-            elif repo.head.is_detached and (not branch.startswith("tags/") and not branch.startswith("remotes/")):
+            elif repo.head.is_detached and (
+                not branch.startswith("tags/") and not branch.startswith("remotes/")):
                 branch = short_sha
                 on = 'commit'
 

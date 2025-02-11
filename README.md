@@ -43,7 +43,6 @@ To install ckanext-selfinfo:
     git clone https://github.com//ckanext-selfinfo.git
     cd ckanext-selfinfo
     pip install -e .
-	pip install -r requirements.txt
 
 3. Add `selfinfo` to the `ckan.plugins` setting in your CKAN
    config file (by default the config file is located at
@@ -62,14 +61,13 @@ do:
     git clone https://github.com//ckanext-selfinfo.git
     cd ckanext-selfinfo
     python setup.py develop
-    pip install -r dev-requirements.txt
 
 
 ## Config Settings
 
-`ckan.selfinfo.ckan_repos_path` - Path to the src folder where CKAN and CKAN Extensions stored at the environment. While provided additional GIT Infromation will be provided.
+`ckan.selfinfo.ckan_repos_path` - Path to the src folder where CKAN and CKAN Extensions stored at the environment. While provided, additional GIT Infromation will be granted.
 
-`ckan.selfinfo.ckan_repos` - List of CKAN Extension folders separated by space (ckanext-scheming ckanext-spatial ckanext-xloader). By default, if `ckan.selfinfo.ckan_repos_path` is provided only CKAN Core will be shown, but this can be extended by providing CKAN Extenstions to the list using this setting. Make sure to read the Note under this options before adding it, as it may cause 500 error, if not configured right.
+`ckan.selfinfo.ckan_repos` - List of CKAN Extension folders separated by space (ckanext-scheming ckanext-spatial ckanext-xloader). By default, if `ckan.selfinfo.ckan_repos_path` is provided ,it will look into the directory and gather the extensions from there. Make sure to read the Note under this options before adding it, as it may cause 500 error, if not configured right.
 
 #### NOTE!
 For Linux, keep in mind that the added folder in `ckan.selfinfo.ckan_repos_path` should have the same owner as the one that runs the application (e.g. if the application runs from `ckan` User in the system, then ckanext-scheming folder owner should be `ckan`), otherwise there will be an error related to ownership of the repository.
