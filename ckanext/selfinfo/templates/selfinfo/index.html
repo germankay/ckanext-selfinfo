@@ -9,7 +9,8 @@
           {% if data.git_info %}
             <a class="nav-link" id="nav-git-tab" data-bs-toggle="tab" data-bs-target="#nav-git"   role="tab" aria-controls="nav-git" aria-selected="false">GIT Info</a>
           {% endif %}
-          <a class="nav-link" id="nav-python-tab" data-bs-toggle="tab" data-bs-target="#nav-python"   role="tab" aria-controls="nav-git" aria-selected="false">Python Info</a>
+          <a class="nav-link" id="nav-python-tab" data-bs-toggle="tab" data-bs-target="#nav-python"   role="tab" aria-controls="nav-python" aria-selected="false">Python Info</a>
+          <a class="nav-link" id="nav-freeze-tab" data-bs-toggle="tab" data-bs-target="#nav-freeze"   role="tab" aria-controls="nav-freeze" aria-selected="false">PIP Freeze</a>
         </div>
     </nav>
 
@@ -130,13 +131,13 @@
         
             {% for group in data.groups %}
             <p>
-                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#{{group}}Collapse"
+                <button class="btn btn-primary mt-3" type="button" data-bs-toggle="collapse" data-bs-target="#{{group}}Collapse"
                     aria-expanded="false" aria-controls="collapseExample">
                     {{ group|upper }}
                 </button>
             </p>
             <div class="collapse" id="{{group}}Collapse">
-                <div class="card card-body">
+                <div class="">
                     <ul class="list-group">
         
                         <li class="list-group-item">
@@ -182,6 +183,17 @@
             </div>
         
             {% endfor %}
+        </div>
+        <div class="tab-pane fade mt-3" id="nav-freeze" role="tabpanel" aria-labelledby="nav-freeze-tab">
+            <button class="btn btn-primary mb-3" onclick="copyClip()">{{ _('Copy list') }}</button>
+            <textarea rows="{{ data.freeze.modules|length }}" class="w-100 form-control" id="freeze-list">{{ data.freeze.modules_html }}</textarea>
+            <script>
+                function copyClip() {
+                    let clip = document.getElementById("freeze-list");
+                    clip.select();
+                    navigator.clipboard.writeText(clip.value);
+                }
+            </script>
         </div>
     </div>
 

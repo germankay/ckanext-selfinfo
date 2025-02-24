@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from collections import OrderedDict
 from typing import Literal, Any, Mapping
 import requests
 import psutil
@@ -59,6 +60,18 @@ def get_python_modules_info(force_reset: bool=False) -> dict[str, Any]:
 
     return groups
 
+
+def get_freeze():
+    try:
+        from pip._internal.operations import freeze
+    except ImportError: # pip < 10.0
+        from pip.operations import freeze
+    pkgs = freeze.freeze()
+    pkgs = list(pkgs)
+    return {
+        "modules": pkgs,
+        "modules_html": f"""{"\n".join(pkgs)}""",
+    }
 
 
 def get_lib_data(lib):
