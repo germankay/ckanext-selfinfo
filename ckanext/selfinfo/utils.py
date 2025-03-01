@@ -116,7 +116,7 @@ def gather_git_info():
             ckan_repos else [
                 name for name in os.listdir(
                     ckan_repos_path) if os.path.isdir(
-                        os.path.join(ckan_repos_path, name))
+                        os.path.join(ckan_repos_path, name)) and not name.startswith('.')
         ]
         repos: dict[str, git.Repo] = {
             repo: get_git_repo(ckan_repos_path + '/' + repo) for repo in list_repos if repo}

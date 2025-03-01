@@ -19,6 +19,8 @@ On CKAN admin page `/ckan-admin/selfinfo`, admin can see such information as:
     - Based on
     - Commit
     - Remotes
+* PIP Freeze
+    - List of modules that are installed.
 * Python Information
     - Provides information about CKAN Core, CKAN Extensions, Python installed packages. It shows their current version and latest version.
 
@@ -65,9 +67,9 @@ do:
 
 ## Config Settings
 
-`ckan.selfinfo.ckan_repos_path` - Path to the src folder where CKAN and CKAN Extensions stored at the environment. While provided, additional GIT Infromation will be granted.
+`ckan.selfinfo.ckan_repos_path` - Path to the src folder where CKAN and CKAN Extensions stored at the environment. While provided, additional GIT Infromation will be granted. Make sure that there no other folders and files that are not related to CKAN are stored there. Example: `/usr/lib/ckan/default/src`
 
-`ckan.selfinfo.ckan_repos` - List of CKAN Extension folders separated by space (ckanext-scheming ckanext-spatial ckanext-xloader). By default, if `ckan.selfinfo.ckan_repos_path` is provided ,it will look into the directory and gather the extensions from there. Make sure to read the Note under this options before adding it, as it may cause 500 error, if not configured right.
+`ckan.selfinfo.ckan_repos` - List of CKAN Extension folders separated by space (ckanext-scheming ckanext-spatial ckanext-xloader). By default, if `ckan.selfinfo.ckan_repos_path` is provided, it will look into the directory and gather the extensions from there. Make sure to read the Note under this options before adding it, as it may cause 500 error, if not configured right.
 
 #### NOTE!
 For Linux, keep in mind that the added folder in `ckan.selfinfo.ckan_repos_path` should have the same owner as the one that runs the application (e.g. if the application runs from `ckan` User in the system, then ckanext-scheming folder owner should be `ckan`), otherwise there will be an error related to ownership of the repository.
