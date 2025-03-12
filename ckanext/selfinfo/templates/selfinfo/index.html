@@ -4,13 +4,13 @@
 <div class="">
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-          <a class="nav-link active" id="nav-system-tab" data-bs-toggle="tab" data-bs-target="#nav-system" role="tab" aria-controls="nav-system" aria-selected="true">System Info</a>
-          <a class="nav-link" id="nav-ckan-tab" data-bs-toggle="tab" data-bs-target="#nav-ckan" role="tab" aria-controls="nav-ckan" aria-selected="false">CKAN Info</a>
+          <button class="nav-link active" id="nav-system-tab" data-bs-toggle="tab" data-bs-target="#nav-system" role="tab" aria-controls="nav-system" aria-selected="true">System Info</button>
+          <button class="nav-link" id="nav-ckan-tab" data-bs-toggle="tab" data-bs-target="#nav-ckan" role="tab" aria-controls="nav-ckan" aria-selected="false">CKAN Info</button>
           {% if data.git_info %}
-            <a class="nav-link" id="nav-git-tab" data-bs-toggle="tab" data-bs-target="#nav-git"   role="tab" aria-controls="nav-git" aria-selected="false">GIT Info</a>
+            <button class="nav-link" id="nav-git-tab" data-bs-toggle="tab" data-bs-target="#nav-git"   role="tab" aria-controls="nav-git" aria-selected="false">GIT Info</button>
           {% endif %}
-          <a class="nav-link" id="nav-python-tab" data-bs-toggle="tab" data-bs-target="#nav-python"   role="tab" aria-controls="nav-python" aria-selected="false">Python Info</a>
-          <a class="nav-link" id="nav-freeze-tab" data-bs-toggle="tab" data-bs-target="#nav-freeze"   role="tab" aria-controls="nav-freeze" aria-selected="false">PIP Freeze</a>
+          <button class="nav-link" id="nav-python-tab" data-bs-toggle="tab" data-bs-target="#nav-python"   role="tab" aria-controls="nav-python" aria-selected="false">Python Info</button>
+          <button class="nav-link" id="nav-freeze-tab" data-bs-toggle="tab" data-bs-target="#nav-freeze"   role="tab" aria-controls="nav-freeze" aria-selected="false">PIP Freeze</button>
         </div>
     </nav>
 
@@ -19,27 +19,62 @@
             <h2 class="mt-3">
                 System Information
             </h2>
-            <div>
-                <table class="table">
+            <div class="mb-4">
+                <table class="table mb-3">
                     <thead>
                         <tr>
                             <th scope="col">System</th>
                             <th scope="col">Python Version</th>
-                            <th scope="col">RAM Usage %</th>
-                            <th scope="col">RAM Usage GB</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>{{ data.platform_info.platform }}</td>
                             <td>{{ data.platform_info.python_version }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h2 class="mt-3">
+                RAM
+            </h2>
+            <div class="mb-4">
+                <table class="table mb3">
+                    <tr>
+                        <th class="col">{{ _('RAM Usage in') }} %</th>
+                        <th class="col">{{ _('RAM Usage GB') }}</th>
+                    </tr>
+                    <tbody>
+                        <tr>
                             <td>{{ data.ram_usage.precent_usage }}%</td>
                             <td>{{ data.ram_usage.used_ram }}GB</td>
                         </tr>
                     </tbody>
                 </table>
-        
-            </div>            
+            </div>
+            <h2 class="mt-3">
+                Disk Space
+            </h2>
+            <div class="mb-4">
+                <table class="table mb3">
+                    <tr>
+                        <th class="col">{{ _('Path') }}</th>
+                        <th class="col">{{ _('Disk Usage in') }} %</th>
+                        <th class="col">{{ _('Disk Total') }}</th>
+                        <th class="col">{{ _('Disk Free') }}</th>
+                    </tr>
+                    <tbody>
+                        {% for disk in data.disk_usage %}
+                            <tr>
+                                <td>{{ disk.path }}</td>
+                                <td>{{ disk.precent_usage }}%</td>
+                                <td>{{ disk.total_disk }}</td>
+                                <td>{{ disk.free_space }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
         <div class="tab-pane fade" id="nav-ckan" role="tabpanel" aria-labelledby="nav-ckan-tab">
             <h2 class="mt-3">
@@ -62,23 +97,26 @@
                         </tr>
                     </tbody>
                 </table>
-        
-                <p>
-                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#extensionsCollapse"
-                        aria-expanded="false" aria-controls="collapseExample">
-                        {{ 'Extensions' }}
-                    </button>
-                </p>
-                <div class="collapse" id="extensionsCollapse">
-                    <div class="card card-body">
-                        <ul class="list-group">
-                            {% for extension in status_show.extensions %}
-                            <li class="list-group-item">
-                                {{ extension }}
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
+
+                <div class="accordion">
+                    <div class="accordion-item mb-3">
+                        <h2 class="accordion-header" id="extensions-heading">
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#extensionsCollapse" aria-expanded="false" aria-controls="extensionsCollapse">
+                            {{ _('Extensions') }}
+                          </button>
+                        </h2>
+                        <div id="extensionsCollapse" class="accordion-collapse collapse" aria-labelledby="extensions-heading">
+                          <div class="accordion-body">
+                            <ul class="list-group">
+                                {% for extension in status_show.extensions %}
+                                <li class="list-group-item">
+                                    {{ extension }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
                 </div>
             </div>
         </div>
@@ -130,58 +168,54 @@
             </div>
         
             {% for group in data.groups %}
-            <p>
-                <button class="btn btn-primary mt-3" type="button" data-bs-toggle="collapse" data-bs-target="#{{group}}Collapse"
-                    aria-expanded="false" aria-controls="collapseExample">
-                    {{ group|upper }}
-                </button>
-            </p>
-            <div class="collapse" id="{{group}}Collapse">
-                <div class="">
-                    <ul class="list-group">
-        
-                        <li class="list-group-item">
-                            <table class="table" data-module="reset-module-last-check">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Current Version</th>
-                                        <th scope="col">Possible Version</th>
-                                        <th scope="col">Last Checked</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for module in data.groups[group] %}
-                                        {% set values = data.groups[group][module] %}
-                                        {% if values.name %}
-                                            <tr>
-                                                <td class="td-{{ values.name }}-selfinfo-name">
-                                                    {{ values.name }}
-                                                </td>
-                                                <td class="td-{{ values.name }}-selfinfo-curVersion">{{ values.current_version }}</td>
-                                                <td class="td-{{ values.name }}-selfinfo-latestVersion">
-                                                    {{ values.latest_version }}
-                                                    {% if values.current_version != values.latest_version %}
-                                                        <i class="fas fa-exclamation-triangle text-warning"></i>
-                                                    {% endif %}
-                                                </td>
-                                                <td class="td-{{ values.name }}-selfinfo-updated">
-                                                    {{ h.render_datetime(values.updated) }}
-                                                    <button name="force-reset" data-target="{{ values.name }}" class="force-reset-selfinfo btn btn-primary">
-                                                        <i class="fas fa-sync-alt"></i>
-                                                    </button>    
-                                                </td>
-                                            </tr>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </li>
-        
-                    </ul>
+            <div class="accordion">
+                <div class="accordion-item mb-3">
+                  <h2 class="accordion-header" id="{{group}}-headinginfo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{group}}-collapseinfo" aria-expanded="false" aria-controls="{{group}}-collapseinfo">
+                        {{ group|upper }}
+                    </button>
+                  </h2>
+                  <div id="{{group}}-collapseinfo" class="accordion-collapse collapse" aria-labelledby="{{group}}-headinginfo">
+                    <div class="accordion-body">
+                        <table class="table" data-module="reset-module-last-check">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Current Version</th>
+                                    <th scope="col">Possible Version</th>
+                                    <th scope="col">Last Checked</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for module in data.groups[group] %}
+                                    {% set values = data.groups[group][module] %}
+                                    {% if values.name %}
+                                        <tr>
+                                            <td class="td-{{ values.name }}-selfinfo-name">
+                                                {{ values.name }}
+                                            </td>
+                                            <td class="td-{{ values.name }}-selfinfo-curVersion">{{ values.current_version }}</td>
+                                            <td class="td-{{ values.name }}-selfinfo-latestVersion">
+                                                {{ values.latest_version }}
+                                                {% if values.current_version != values.latest_version %}
+                                                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                                                {% endif %}
+                                            </td>
+                                            <td class="td-{{ values.name }}-selfinfo-updated">
+                                                {{ h.render_datetime(values.updated) }}
+                                                <button name="force-reset" data-target="{{ values.name }}" class="force-reset-selfinfo btn btn-primary">
+                                                    <i class="fas fa-sync-alt"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                  </div>
                 </div>
-            </div>
-        
+              </div>
             {% endfor %}
         </div>
         <div class="tab-pane fade mt-3" id="nav-freeze" role="tabpanel" aria-labelledby="nav-freeze-tab">

@@ -18,6 +18,7 @@ def get_selfinfo(
     
     platform_info: dict[str, Any] = selfutils.get_platform_info()
     ram_usage: dict[str, Any] = selfutils.get_ram_usage()
+    disk_usage: list[dict[str, Any]] = selfutils.get_disk_usage()
     groups: dict[str, Any] = selfutils.get_python_modules_info(
         force_reset=data_dict.get("force-reset", False),
     )
@@ -28,6 +29,7 @@ def get_selfinfo(
         "groups": groups,
         "platform_info": platform_info,
         "ram_usage": ram_usage,
+        "disk_usage": disk_usage,
         "git_info": git_info,
         "freeze": freeze,
     }

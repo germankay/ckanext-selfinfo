@@ -10,10 +10,13 @@ import platform
 import git
 from datetime import datetime
 import importlib_metadata as imetadata
+import logging
 
 from ckan.lib.redis import connect_to_redis, Redis
 import ckan.plugins.toolkit as tk
 
+
+log = logging.getLogger(__name__)
 
 REDIS_SUFFIX: Literal["_selfinfo"] = "_selfinfo"
 STORE_TIME: float = 604800.0 # one week
@@ -98,6 +101,26 @@ def get_ram_usage() -> dict[str, Any]:
         "precent_usage": memory[2],
         "used_ram": bytes2human(memory[3], format="%(value).1f")
     }
+
+
+def get_disk_usage():
+    paths = tk.config.get('ckan.selfinfo.partitions', '/')
+    results = []
+    for path in paths.split(','):
+        try:
+            usage = psutil.disk_usage(path.strip())
+            if usage:
+                results.append(
+                    {
+                        "path": path,
+                        "precent_usage":  usage.percent,
+                        "total_disk": bytes2human(usage.total, format="%(value).1f%(symbol)s"),
+                        "free_space": bytes2human(usage.free, format="%(value).1f%(symbol)s")
+                    }
+                )
+        except OSError:
+            log.exception(f"Path '{path}' does not exists.")
+    return results
 
 
 def get_platform_info() -> dict[str, Any]:

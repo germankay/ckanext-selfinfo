@@ -6,8 +6,14 @@ On CKAN admin page `/ckan-admin/selfinfo`, admin can see such information as:
 * System Information
     - System name
     - Python version
+* RAM
     - RAM Usage in %
     - RAM Usage in GB
+* Disk Space
+    - Path
+    - Disk Usage in %
+    - Disk Total
+    - Disk Free
 * CKAN Information
     - Site Title
     - CKAN Version
@@ -73,6 +79,10 @@ do:
 
 #### NOTE!
 For Linux, keep in mind that the added folder in `ckan.selfinfo.ckan_repos_path` should have the same owner as the one that runs the application (e.g. if the application runs from `ckan` User in the system, then ckanext-scheming folder owner should be `ckan`), otherwise there will be an error related to ownership of the repository.
+
+`ckan.selfinfo.partitions` - Used for representing disk space. The value is comma separated paths. By default the value is `/`, which is usually the root.
+
+Example: `/path/to/partition /path/to/partition2 /path/to/partition3`
 
 ## Tests
 
