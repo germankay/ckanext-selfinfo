@@ -24,6 +24,7 @@ def get_selfinfo(
     )
     freeze = selfutils.get_freeze()
     git_info = selfutils.gather_git_info()
+    errors = selfutils.retrieve_errors()
 
     return {
         "groups": groups,
@@ -32,4 +33,5 @@ def get_selfinfo(
         "disk_usage": disk_usage,
         "git_info": git_info,
         "freeze": freeze,
+        "errors": errors,
     }

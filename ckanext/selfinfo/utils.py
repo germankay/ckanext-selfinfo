@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import os
-from collections import OrderedDict
-from typing import Literal, Any, Mapping
+from typing import Any, Mapping
 import requests
 import psutil
 from psutil._common import bytes2human
@@ -11,17 +10,24 @@ import git
 from datetime import datetime
 import importlib_metadata as imetadata
 import logging
+import json
 
 from ckan.lib.redis import connect_to_redis, Redis
 import ckan.plugins.toolkit as tk
-
+from .config import (
+    selfinfo_get_redis_prefix,
+    selfinfo_get_repos_path,
+    selfinfo_get_partitions,
+    SELFINFO_REDIS_SUFFIX,
+    STORE_TIME,
+    PYPI_URL,
+)
 
 log = logging.getLogger(__name__)
 
-REDIS_SUFFIX: Literal["_selfinfo"] = "_selfinfo"
-STORE_TIME: float = 604800.0 # one week
-# STORE_TIME: float = 1.0
-PYPI_URL: Literal["https://pypi.org/pypi/"] = "https://pypi.org/pypi/"
+
+def get_redis_key(name):
+    return selfinfo_get_redis_prefix() + name + SELFINFO_REDIS_SUFFIX
 
 
 def get_python_modules_info(force_reset: bool=False) -> dict[str, Any]:
@@ -38,7 +44,7 @@ def get_python_modules_info(force_reset: bool=False) -> dict[str, Any]:
                 group: str = i if i in groups else "other"
 
                 if module in module and not module in groups[group]:
-                    redis_key: str = module + REDIS_SUFFIX
+                    redis_key: str = get_redis_key(module)
                     data: Mapping[str, Any] = {
                         "name": module,
                         "current_version": modules.get(module, 'unknown'),
@@ -104,7 +110,7 @@ def get_ram_usage() -> dict[str, Any]:
 
 
 def get_disk_usage():
-    paths = tk.config.get('ckan.selfinfo.partitions', '/')
+    paths = selfinfo_get_partitions()
     results = []
     for path in paths.split(','):
         try:
@@ -131,7 +137,7 @@ def get_platform_info() -> dict[str, Any]:
 
 
 def gather_git_info():
-    ckan_repos_path = tk.config.get('ckan.selfinfo.ckan_repos_path')
+    ckan_repos_path = selfinfo_get_repos_path()
     repos_info: list[dict[str,Any]] = []
     if ckan_repos_path:
         ckan_repos = tk.config.get('ckan.selfinfo.ckan_repos', '')
@@ -179,3 +185,11 @@ def gather_git_info():
 def get_git_repo(path):
     repo = git.Repo(path)
     return repo
+
+
+def retrieve_errors():
+    redis: Redis = connect_to_redis()
+    key = get_redis_key('errors')
+    if not redis.exists(key):
+        redis.set(key, json.dumps([]))
+    return json.loads(redis.get(key))

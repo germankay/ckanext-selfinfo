@@ -8,7 +8,7 @@ from ckan import types
 from ckan.lib.redis import connect_to_redis, Redis
 import ckan.plugins.toolkit as tk
 
-from ckanext.selfinfo.utils import REDIS_SUFFIX
+from ckanext.selfinfo.utils import SELFINFO_REDIS_SUFFIX
 
 import ckanext.selfinfo.utils as selfutils
 
@@ -24,7 +24,7 @@ def update_last_module_check(
     if module:
         redis: Redis = connect_to_redis()
         
-        redis_key: str =  module + REDIS_SUFFIX
+        redis_key: str =  module + SELFINFO_REDIS_SUFFIX
         now: float = datetime.utcnow().timestamp()
         
         data: Mapping[str, Any] = {

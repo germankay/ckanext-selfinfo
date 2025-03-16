@@ -4,6 +4,7 @@ import ckan.plugins.toolkit as tk
 from .logic import action
 from . import cli
 
+
 @tk.blanket.cli(cli.get_commands)
 @tk.blanket.actions(action.get_actions)
 @tk.blanket.blueprints
