@@ -11,6 +11,7 @@ from datetime import datetime
 import importlib_metadata as imetadata
 import logging
 import json
+import distro
 
 from ckan.lib.redis import connect_to_redis, Redis
 import ckan.plugins.toolkit as tk
@@ -105,8 +106,9 @@ def get_lib_latest_version(lib):
 def get_ram_usage() -> dict[str, Any]:
     memory = psutil.virtual_memory()
     return {
-        "precent_usage": memory[2],
-        "used_ram": bytes2human(memory[3], format="%(value).1f")
+        "precent_usage": memory.percent,
+        "used_ram": bytes2human(memory.used, format="%(value).1f"),
+        "total_ram": bytes2human(memory.total, format="%(value).1f")
     }
 
 
@@ -132,6 +134,7 @@ def get_disk_usage():
 
 def get_platform_info() -> dict[str, Any]:
     return {
+        "distro": distro.name() + " " + distro.version(),
         "python_version": platform.python_version(),
         "platform": platform.platform(),
     }

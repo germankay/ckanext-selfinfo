@@ -24,13 +24,15 @@
                 <table class="table mb-3">
                     <thead>
                         <tr>
-                            <th scope="col">System</th>
+                            <th scope="col">System Platform</th>
+                            <th scope="col">Distribution</th>
                             <th scope="col">Python Version</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>{{ data.platform_info.platform }}</td>
+                            <td>{{ data.platform_info.distro }}</td>
                             <td>{{ data.platform_info.python_version }}</td>
                         </tr>
                     </tbody>
@@ -44,11 +46,13 @@
                     <tr>
                         <th class="col">{{ _('RAM Usage in') }} %</th>
                         <th class="col">{{ _('RAM Usage GB') }}</th>
+                        <th class="col">{{ _('RAM Total') }}</th>
                     </tr>
                     <tbody>
                         <tr>
                             <td>{{ data.ram_usage.precent_usage }}%</td>
                             <td>{{ data.ram_usage.used_ram }}GB</td>
+                            <td>{{ data.ram_usage.total_ram }}GB</td>
                         </tr>
                     </tbody>
                 </table>
