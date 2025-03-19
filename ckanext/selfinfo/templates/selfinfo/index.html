@@ -252,8 +252,8 @@
             <div class="list-group">
                 {% for error in data.errors|reverse %}
                     {% set even = loop.index % 2 == 0 %}
-                    <div class="list-group-item {% if even %} list-group-item-secondary {% endif %}">
-                        <pre>{{ error }}</pre>
+                    <div class="list-group-item p-3 {% if even %} list-group-item-secondary {% endif %}">
+                        <pre class="pb-3 mb-0">{{ error }}</pre>
                     </div>
                 {% endfor %}
             </div>

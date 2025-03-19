@@ -77,9 +77,10 @@ def get_freeze():
         from pip.operations import freeze
     pkgs = freeze.freeze()
     pkgs = list(pkgs)
+    pkgs_string = "\n".join(list(pkgs))
     return {
         "modules": pkgs,
-        "modules_html": f"""{"\n".join(pkgs)}""",
+        "modules_html": f"""{pkgs_string}""",
     }
 
 
