@@ -13,6 +13,8 @@ import logging
 import json
 import distro
 import inspect
+import functools
+import types
 
 from ckan.lib.redis import connect_to_redis, Redis
 import ckan.plugins.toolkit as tk
@@ -250,9 +252,20 @@ def ckan_helpers():
     from ckan.lib.helpers import helper_functions
     data = []
     for n, f in helper_functions.items():
+        chained = False
+        # For chained items
+        if isinstance(f, functools.partial):
+            f = f.func
+            chained = True
+
+        # Avoid builtin
+        if isinstance(f, (types.BuiltinFunctionType, types.BuiltinMethodType)):
+            continue
+
         data.append({
             "func_name": n,
             "docstring": inspect.getdoc(f),
-            "defined": inspect.getsourcefile(f)
+            "defined": inspect.getsourcefile(f),
+            "chained": chained
         })
     return data
