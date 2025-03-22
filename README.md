@@ -6,27 +6,30 @@ CKAN should be configured to be able to connect to Redis as it heavily relies on
 
 On CKAN admin page `/ckan-admin/selfinfo`, admin can see such information as:
 * System Information
-    - System name
+    - System Platform
+    - Distribution
     - Python version
 * RAM
     - RAM Usage in %
-    - RAM Usage in GB
+    - RAM Usage GB
+    - RAM Total
 * Disk Space
     - Path
     - Disk Usage in %
     - Disk Total
     - Disk Free
 * CKAN Information
-    - Site Title
-    - CKAN Version
-    - Default Language
-    - Extensions that enabled on the portal
+    - Basic Information
+    - Actions
+    - Helpers
+    - Blueprints
 * GIT Information (Optional, see Config Settings section)
     - Project
     - Head
     - Based on
     - Commit
     - Remotes
+    - Errors info in case if cannot be shown
 * PIP Freeze
     - List of modules that are installed.
 * Python Information
@@ -78,18 +81,20 @@ do:
 
 `ckan.selfinfo.redis_prefix_key` - This configuration is needed, when you use Redis with multiple CKAN apps. In order to have a unique key per portal, this configuration can be used. Example `ckan_test` will be used as `ckan_test_errors_selinfo`.
 
-`ckan.selfinfo.ckan_repos_path` - Path to the src folder where CKAN and CKAN Extensions stored at the environment. While provided, additional GIT Infromation will be granted. Make sure that there no other folders and files that are not related to CKAN are stored there. Example: `/usr/lib/ckan/default/src`
-
-`ckan.selfinfo.ckan_repos` - List of CKAN Extension folders separated by space (ckanext-scheming ckanext-spatial ckanext-xloader). By default, if `ckan.selfinfo.ckan_repos_path` is provided, it will look into the directory and gather the extensions from there. Make sure to read the Note under this options before adding it, as it may cause 500 error, if not configured right.
-
-#### NOTE!
-For Linux, keep in mind that the added folder in `ckan.selfinfo.ckan_repos_path` should have the same owner as the one that runs the application (e.g. if the application runs from `ckan` User in the system, then ckanext-scheming folder owner should be `ckan`), otherwise there will be an error related to ownership of the repository.
-
 `ckan.selfinfo.partitions` - Used for representing disk space. The value is comma separated paths. By default the value is `/`, which is usually the root.
 
 Example: `/path/to/partition /path/to/partition2 /path/to/partition3`
 
 `ckan.selfinfo.errors_limit` - Limit used to specify how much errors will be stored in Redis. By default this value is `20`.
+
+`ckan.selfinfo.ckan_repos_path` - Path to the src folder where CKAN and CKAN Extensions stored at the environment. While provided, additional GIT Infromation will be granted. Make sure that there no other folders and files that are not related to CKAN are stored there. Example: `/usr/lib/ckan/default/src`
+
+`ckan.selfinfo.ckan_repos` - List of CKAN Extension folders separated by space (ckanext-scheming ckanext-spatial ckanext-xloader). By default, if `ckan.selfinfo.ckan_repos_path` is provided, it will look into the directory and gather the extensions from there.
+
+#### NOTE!
+For Linux, keep in mind that the added folder in `ckan.selfinfo.ckan_repos_path` should have the same owner as the one that runs the application (e.g. if the application runs from `ckan` User in the system, then ckanext-scheming folder owner should be `ckan`), otherwise there will be an error related to ownership of the repository.
+
+Errors for GIT now being stored below the original Table on GIT Info tab.
 
 
 ## Enable Errors Saving

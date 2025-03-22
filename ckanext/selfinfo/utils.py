@@ -12,6 +12,7 @@ import importlib_metadata as imetadata
 import logging
 import json
 import distro
+import inspect
 
 from ckan.lib.redis import connect_to_redis, Redis
 import ckan.plugins.toolkit as tk
@@ -142,7 +143,10 @@ def get_platform_info() -> dict[str, Any]:
 
 def gather_git_info():
     ckan_repos_path = selfinfo_get_repos_path()
-    repos_info: list[dict[str,Any]] = []
+    git_info = {
+        "repos_info": [],
+        "access_errors": {}
+    }
     if ckan_repos_path:
         ckan_repos = tk.config.get('ckan.selfinfo.ckan_repos', '')
         list_repos = ckan_repos.strip().split(" ") if \
@@ -151,43 +155,52 @@ def gather_git_info():
                     ckan_repos_path) if os.path.isdir(
                         os.path.join(ckan_repos_path, name)) and not name.startswith('.')
         ]
-        repos: dict[str, git.Repo] = {
+
+        repos: dict[str, git.Repo | None] = {
             repo: get_git_repo(ckan_repos_path + '/' + repo) for repo in list_repos if repo}
 
         for name, repo in repos.items():
+            if not repo:
+                continue
+            try:
+                commit, branch = repo.head.object.name_rev.strip().split(" ")
+                short_sha: str = repo.git.rev_parse(commit, short=True)
+                on = 'branch'
 
-            commit, branch = repo.head.object.name_rev.strip().split(" ")
-            short_sha: str = repo.git.rev_parse(commit, short=True)
-            on = 'branch'
+                if repo.head.is_detached and branch.startswith("remotes/"):
+                    branch = short_sha
+                    on = 'commit'
+                elif repo.head.is_detached and branch.startswith("tags/"):
+                    on = 'tag'
+                elif repo.head.is_detached and (
+                    not branch.startswith("tags/") and not branch.startswith("remotes/")):
+                    branch = short_sha
+                    on = 'commit'
 
-            if repo.head.is_detached and branch.startswith("remotes/"):
-                branch = short_sha
-                on = 'commit'
-            elif repo.head.is_detached and branch.startswith("tags/"):
-                on = 'tag'
-            elif repo.head.is_detached and (
-                not branch.startswith("tags/") and not branch.startswith("remotes/")):
-                branch = short_sha
-                on = 'commit'
-
-            repos_info.append({
-                "name": name,
-                "head": branch,
-                "commit": short_sha,
-                "on": on,
-                "remotes": [
-                    {
-                        "name": remote.name,
-                        "url": remote.url,
-                        } for remote in repo.remotes
-                    ]
-            })
-
-    return repos_info
+                git_info['repos_info'].append({
+                    "name": name,
+                    "head": branch,
+                    "commit": short_sha,
+                    "on": on,
+                    "remotes": [
+                        {
+                            "name": remote.name,
+                            "url": remote.url,
+                            } for remote in repo.remotes
+                        ]
+                })
+            except ValueError as e:
+                git_info['access_errors'][name] = e
+    return git_info
 
 
 def get_git_repo(path):
-    repo = git.Repo(path)
+    repo = None
+    try:
+        repo = git.Repo(path)
+    except git.exc.InvalidGitRepositoryError as e:
+        pass
+
     return repo
 
 
@@ -197,3 +210,49 @@ def retrieve_errors():
     if not redis.exists(key):
         redis.set(key, json.dumps([]))
     return json.loads(redis.get(key))
+
+
+def ckan_actions():
+    from ckan.logic import _actions
+    data = []
+    for n, f in _actions.items():
+        data.append({
+            "func_name": n,
+            "docstring": inspect.getdoc(f),
+        })
+
+    return data
+
+
+def ckan_bluprints():
+    from flask import current_app
+    app = current_app
+    data = {}
+
+    for name, blueprint in app.blueprints.items():
+        data[name] = []
+        for rule in current_app.url_map.iter_rules():
+            if rule.endpoint.startswith(f"{name}."):
+                view_func = current_app.view_functions[rule.endpoint]
+                # signature = inspect.signature(view_func)
+
+                data[name].append({
+                    'path': rule.rule,
+                    'methods': rule.methods,
+                    'route': rule.endpoint,
+                    'route_func': view_func.__name__,
+                })
+
+    return data
+
+
+def ckan_helpers():
+    from ckan.lib.helpers import helper_functions
+    data = []
+    for n, f in helper_functions.items():
+        data.append({
+            "func_name": n,
+            "docstring": inspect.getdoc(f),
+            "defined": inspect.getsourcefile(f)
+        })
+    return data
