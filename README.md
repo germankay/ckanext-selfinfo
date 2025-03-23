@@ -164,4 +164,4 @@ If ckanext-selfinfo should be available on PyPI you can follow these steps to pu
 
 ## License
 
-[AGPL](https://www.gnu.org/licenses/agpl-3.0.en.html)
+MIT
