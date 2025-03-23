@@ -29,6 +29,7 @@ def get_selfinfo(
     git_info = selfutils.gather_git_info()
     errors = selfutils.retrieve_errors()
     actions = selfutils.ckan_actions()
+    auth = selfutils.ckan_auth_actions()
     blueprints = selfutils.ckan_bluprints()
     helpers = selfutils.ckan_helpers()
 
@@ -41,6 +42,7 @@ def get_selfinfo(
         "freeze": freeze,
         "errors": errors,
         "actions": actions,
+        "auth": auth,
         "blueprints": blueprints,
         "helpers": helpers,
     }

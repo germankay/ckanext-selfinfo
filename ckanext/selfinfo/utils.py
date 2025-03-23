@@ -218,13 +218,41 @@ def ckan_actions():
     from ckan.logic import _actions
     data = []
     for n, f in _actions.items():
+        chained = False
+        # For chained items
+        if hasattr(f, '__closure__') and len(f.__closure__):
+            if isinstance(
+                f.__closure__[0].cell_contents,
+                functools.partial):
+                chained = True
+
         data.append({
             "func_name": n,
             "docstring": inspect.getdoc(f),
+            "chained": chained,
         })
 
     return data
 
+
+def ckan_auth_actions():
+    from ckan.authz import _AuthFunctions
+    data = []
+    for n in _AuthFunctions.keys():
+        f = _AuthFunctions.get(n)
+        chained = False
+        # For chained items
+        if isinstance(f, functools.partial):
+            f = f.func
+            chained = True
+
+        data.append({
+            "func_name": n,
+            "docstring": inspect.getdoc(f),
+            "chained": chained,
+        })
+
+    return data
 
 def ckan_bluprints():
     from flask import current_app

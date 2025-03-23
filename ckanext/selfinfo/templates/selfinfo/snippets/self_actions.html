@@ -3,6 +3,7 @@
 </h3>
 <div class="mb-3">
     <i class="fas fa-exclamation-triangle text-warning"></i> - Missing docstring.
+    <i class="fas fa-info-circle text-info"></i> - Chained.
 </div>
 <div>
     <div class="accordion">
@@ -14,6 +15,9 @@
                     <span class="h4 mb-0">{{ action.func_name }}</span>
                     {% if not action.docstring %}
                         <i class="fas fa-exclamation-triangle text-warning ms-2"></i>
+                    {% endif %}
+                    {% if action.chained %}
+                        <i class="fas fa-info-circle text-info ms-2"></i>
                     {% endif %}
                 </div>
               </button>

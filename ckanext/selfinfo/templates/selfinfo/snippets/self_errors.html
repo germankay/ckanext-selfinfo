@@ -19,8 +19,9 @@
 <div class="list-group">
     {% for error in data.errors|reverse %}
         {% set even = loop.index % 2 == 0 %}
-        <div class="list-group-item p-3 {% if even %} list-group-item-secondary {% endif %}">
-            <pre class="pb-3 mb-0">{{ error }}</pre>
+        <div class="list-group-item p-3 {% if even %} list-group-item-secondary {% endif %} position-relative">
+            <button class="position-absolute end-0 top-0 m-3 btn btn-primary mb-3" onclick='copyElementContent("selfinfo-{{ loop.index }}-error")'>{{ _('Copy') }}</button>
+            <pre id="selfinfo-{{ loop.index }}-error" class="pb-3 mb-0">{{ error }}</pre>
         </div>
     {% endfor %}
 </div>

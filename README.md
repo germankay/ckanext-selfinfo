@@ -81,6 +81,8 @@ do:
 
 `ckan.selfinfo.redis_prefix_key` - This configuration is needed, when you use Redis with multiple CKAN apps. In order to have a unique key per portal, this configuration can be used. Example `ckan_test` will be used as `ckan_test_errors_selinfo`.
 
+`ckan.selfinfo.page_url` - Used to provide alternative URL to Selfinfo Admin Page. By default it is set to `/ckan-admin/selfinfo`.
+
 `ckan.selfinfo.partitions` - Used for representing disk space. The value is comma separated paths. By default the value is `/`, which is usually the root.
 
 Example: `/path/to/partition /path/to/partition2 /path/to/partition3`

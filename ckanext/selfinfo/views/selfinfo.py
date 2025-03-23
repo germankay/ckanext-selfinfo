@@ -10,9 +10,10 @@ import ckan.model as model
 import ckan.plugins.toolkit as tk
 from ckan.lib.redis import connect_to_redis, Redis
 from ckanext.selfinfo.utils import get_redis_key
+from ckanext.selfinfo.config import selfinfo_get_path
 
 
-selfinfo = Blueprint("selfinfo", __name__, url_prefix="/ckan-admin")
+selfinfo = Blueprint("selfinfo", __name__)
 
 
 class SelfinfoView(MethodView):
@@ -48,6 +49,6 @@ class SelfinfoView(MethodView):
 
 
 selfinfo.add_url_rule(
-    "/selfinfo",
+    selfinfo_get_path(),
     view_func=SelfinfoView.as_view("index"),
 )

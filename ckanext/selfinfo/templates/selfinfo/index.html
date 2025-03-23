@@ -45,6 +45,7 @@
                             <div class="nav nav-tabs" id="nav-tab" role="tablist">
                             <button class="nav-link active" id="nav-ckan-tab-basic-tab" data-bs-toggle="tab" data-bs-target="#nav-ckan-tab-basic" role="tab" aria-controls="nav-ckan-tab-basic" aria-selected="true">Basic Info</button>
                             <button class="nav-link" id="nav-ckan-tab-actions-tab" data-bs-toggle="tab" data-bs-target="#nav-ckan-tab-actions" role="tab" aria-controls="nav-ckan-tab-actions" aria-selected="false">Actions</button>
+                            <button class="nav-link" id="nav-ckan-tab-auths-tab" data-bs-toggle="tab" data-bs-target="#nav-ckan-tab-auths" role="tab" aria-controls="nav-ckan-tab-auths" aria-selected="false">Auth</button>
                             <button class="nav-link" id="nav-ckan-tab-helpers-tab" data-bs-toggle="tab" data-bs-target="#nav-ckan-tab-helpers" role="tab" aria-controls="nav-ckan-tab-helpers" aria-selected="false">Helpers</button>
                             <button class="nav-link" id="nav-ckan-tab-blueprints-tab" data-bs-toggle="tab" data-bs-target="#nav-ckan-tab-blueprints" role="tab" aria-controls="nav-ckan-tab-blueprints" aria-selected="false">Blueprints</button>
                             </div>
@@ -55,6 +56,9 @@
                             </div>
                             <div class="tab-pane fade" id="nav-ckan-tab-actions" role="tabpanel" aria-labelledby="nav-ckan-tab-actions-tab">
                                 {% snippet 'selfinfo/snippets/self_actions.html', data=data %}
+                            </div>
+                            <div class="tab-pane fade" id="nav-ckan-tab-auths" role="tabpanel" aria-labelledby="nav-ckan-tab-auths-tab">
+                                {% snippet 'selfinfo/snippets/self_auth_actions.html', data=data %}
                             </div>
                             <div class="tab-pane fade" id="nav-ckan-tab-helpers" role="tabpanel" aria-labelledby="nav-ckan-tab-helpers-tab">
                                 {% snippet 'selfinfo/snippets/self_helpers.html', data=data %}
@@ -85,4 +89,24 @@
         </article>
     {% endblock %}
     </div>
+    <script>
+        function copyTextareaClip(id) {
+            let clip = document.getElementById(id);
+            clip.select();
+            navigator.clipboard.writeText(clip.value);
+        }
+
+        function copyElementContent(id) {
+        var preElement = document.getElementById(id);
+
+        var tempTextArea = document.createElement("textarea");
+        tempTextArea.value = preElement.textContent;
+        document.body.appendChild(tempTextArea);
+
+        tempTextArea.select();
+        document.execCommand("copy");
+
+        document.body.removeChild(tempTextArea);
+    }
+    </script>
 {% endblock %}
