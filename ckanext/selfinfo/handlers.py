@@ -5,6 +5,7 @@ import json
 from datetime import datetime
 
 from ckan.lib.redis import connect_to_redis, Redis
+import ckan.plugins.toolkit as tk
 
 from .config import selfinfo_get_errors_limit
 from .utils import get_redis_key
@@ -28,5 +29,6 @@ class SelfinfoErrorHandler(logging.Handler):
                 start_key = len(erorrs) - errors_limit + 1
                 erorrs = erorrs[start_key:]
 
-            erorrs.append(log_message)
+            current_url = tk.h.full_current_url()
+            erorrs.append({"error": log_message, "error_url": current_url if current_url else "Missing URL"})
             redis.set(redis_key, json.dumps(erorrs))

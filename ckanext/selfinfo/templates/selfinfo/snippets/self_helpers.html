@@ -5,8 +5,9 @@
     <i class="fas fa-exclamation-triangle text-warning"></i> - Missing docstring.
     <i class="fas fa-info-circle text-info"></i> - Chained.
 </div>
+<input type="text" class="form-control mb-3" placeholder="Search items..." data-module="search-through-content" data-module-target="#helpers-accrd-parent .accordion-item">
 <div>
-    <div class="accordion">
+    <div class="accordion" id="helpers-accrd-parent">
         {% for helper in data.helpers %}
         <div class="accordion-item mb-3 border">
             <h2 class="accordion-header" id="helper-{{helper.func_name}}-heading">
@@ -24,10 +25,8 @@
             </h2>
             <div id="helper-{{helper.func_name}}" class="accordion-collapse collapse" aria-labelledby="helper-{{helper.func_name}}-heading">
               <div class="accordion-body">
-                <div>
-                    <span class="h4">
-                        {{ helper.defined }}
-                    </span>
+                <div class="h4 mb-3">
+                    {{ helper.defined }}
                 </div>
                 {% if helper.docstring %}
                     <pre>{{ helper.docstring }}</pre>

@@ -21,6 +21,7 @@ On CKAN admin page `/ckan-admin/selfinfo`, admin can see such information as:
 * CKAN Information
     - Basic Information
     - Actions
+    - Auth
     - Helpers
     - Blueprints
 * GIT Information (Optional, see Config Settings section)
