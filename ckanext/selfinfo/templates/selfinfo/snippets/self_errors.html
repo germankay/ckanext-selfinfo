@@ -6,6 +6,12 @@
         {% else %}
             {{ _('Errors') }}
         {% endif %}
+        <button class="text-primary bg-transparent box-shadow-none border-0" onclick='copyElementContent("{{ id }}-anchor")'>
+            <i class="fa fa-anchor" aria-hidden="true"></i>
+        </button>
+        <div id="{{ id }}-anchor" class="hidden d-none">
+            {{ full_url ~ '#' ~ id }}
+        </div>
     </h2>
     <div>
         {% if data.errors|length %}
@@ -24,7 +30,11 @@
                 <button class="position-absolute end-0 top-0 m-3 btn btn-primary mb-3" onclick='copyElementContent("selfinfo-{{ loop.index }}-error")'>{{ _('Copy') }}</button>
                 {% if error.error_url %}
                     <div class="mb-3">
-                        <a class="fw-bold" href="{{ error.error_url }}" target="_blank">{{ error.error_url }}</a>
+                        {% if error.error_url.startswith("http") %}
+                            <a class="fw-bold" href="{{ error.error_url }}" target="_blank">{{ error.error_url }}</a>
+                        {% else %}
+                            {{ error.error_url }}
+                        {% endif %}
                     </div>
                 {% endif %}
                 <pre id="selfinfo-{{ loop.index }}-error" class="pb-3 mb-0">{{ error.error }}</pre>
