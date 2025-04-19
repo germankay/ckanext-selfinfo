@@ -107,11 +107,31 @@ def get_lib_latest_version(lib):
 
 
 def get_ram_usage() -> dict[str, Any]:
+    psutil.process_iter.cache_clear()
     memory = psutil.virtual_memory()
+    top10 = []
+    processes = []
+    for proc in psutil.process_iter(['pid', 'name', 'memory_info']):
+        try:
+            mem = proc.info['memory_info'].rss
+            processes.append((proc.info['pid'], proc.info['name'], mem))
+            top10 = [
+                list(process) for process in (
+                    sorted(processes, key=lambda x: x[2], reverse=True)[:10]
+                )
+            ]
+
+            for p in top10:
+                p[2] = bytes2human(p[2])
+
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            log.error('Cannot retrieve processes')
+
     return {
         "precent_usage": memory.percent,
-        "used_ram": bytes2human(memory.used, format="%(value).1f"),
-        "total_ram": bytes2human(memory.total, format="%(value).1f")
+        "used_ram": bytes2human(memory.used),
+        "total_ram": bytes2human(memory.total),
+        "processes": top10,
     }
 
 
@@ -126,8 +146,8 @@ def get_disk_usage():
                     {
                         "path": path,
                         "precent_usage":  usage.percent,
-                        "total_disk": bytes2human(usage.total, format="%(value).1f%(symbol)s"),
-                        "free_space": bytes2human(usage.free, format="%(value).1f%(symbol)s")
+                        "total_disk": bytes2human(usage.total),
+                        "free_space": bytes2human(usage.free)
                     }
                 )
         except OSError:

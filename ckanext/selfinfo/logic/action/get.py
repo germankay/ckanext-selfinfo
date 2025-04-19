@@ -52,3 +52,13 @@ def get_selfinfo(
         item.selfinfo_after_prepared(data)
 
     return data
+
+
+def selfinfo_get_ram(
+    context: types.Context,
+    data_dict: dict[str, Any],
+) -> dict[str, Any]:
+
+    tk.check_access("sysadmin", context, data_dict)
+
+    return selfutils.get_ram_usage()
