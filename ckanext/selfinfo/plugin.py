@@ -5,6 +5,7 @@ from .logic import action
 from . import cli
 
 
+@tk.blanket.config_declarations
 @tk.blanket.cli(cli.get_commands)
 @tk.blanket.actions(action.get_actions)
 @tk.blanket.blueprints

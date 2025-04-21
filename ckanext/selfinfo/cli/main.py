@@ -17,6 +17,8 @@ def update_module_info(module: str):
 
 
 def get_selfinfo():
+    # TO DO
+    # Remove or re-implement
     data = tk.get_action("get_selfinfo")({
         "ignore_auth": True},
         {}

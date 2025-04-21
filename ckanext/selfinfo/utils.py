@@ -17,21 +17,15 @@ import functools
 import types
 
 from ckan.lib.redis import connect_to_redis, Redis
-import ckan.plugins.toolkit as tk
-from .config import (
-    selfinfo_get_redis_prefix,
-    selfinfo_get_repos_path,
-    selfinfo_get_partitions,
-    SELFINFO_REDIS_SUFFIX,
-    STORE_TIME,
-    PYPI_URL,
-)
+
+import ckanext.selfinfo.config as self_config
+
 
 log = logging.getLogger(__name__)
 
 
 def get_redis_key(name):
-    return selfinfo_get_redis_prefix() + name + SELFINFO_REDIS_SUFFIX
+    return self_config.selfinfo_get_redis_prefix() + name + self_config.SELFINFO_REDIS_SUFFIX
 
 
 def get_python_modules_info(force_reset: bool=False) -> dict[str, Any]:
@@ -58,7 +52,7 @@ def get_python_modules_info(force_reset: bool=False) -> dict[str, Any]:
                         data["latest_version"] = get_lib_latest_version(module)
                         redis.hset(redis_key, mapping=data)
 
-                    if (now - float(redis.hget(redis_key, "updated").decode("utf-8"))) > STORE_TIME or force_reset:
+                    if (now - float(redis.hget(redis_key, "updated").decode("utf-8"))) > self_config.STORE_TIME or force_reset:
                         data["latest_version"] = get_lib_latest_version(module)
                         for key in data:
                             if data[key] != redis.hget(redis_key, key):
@@ -89,7 +83,7 @@ def get_freeze():
 
 
 def get_lib_data(lib):
-    req = requests.get(PYPI_URL + lib + '/json', headers={
+    req = requests.get(self_config.PYPI_URL + lib + '/json', headers={
         "Content-Type": "application/json"
     })
 
@@ -136,9 +130,11 @@ def get_ram_usage() -> dict[str, Any]:
 
 
 def get_disk_usage():
-    paths = selfinfo_get_partitions()
+    paths = self_config.selfinfo_get_partitions()
     results = []
-    for path in paths.split(','):
+
+    for path in paths:
+        # mounpoint
         try:
             usage = psutil.disk_usage(path.strip())
             if usage:
@@ -164,14 +160,14 @@ def get_platform_info() -> dict[str, Any]:
 
 
 def gather_git_info():
-    ckan_repos_path = selfinfo_get_repos_path()
+    ckan_repos_path = self_config.selfinfo_get_repos_path()
     git_info = {
         "repos_info": [],
         "access_errors": {}
     }
     if ckan_repos_path:
-        ckan_repos = tk.config.get('ckan.selfinfo.ckan_repos', '')
-        list_repos = ckan_repos.strip().split(" ") if \
+        ckan_repos = self_config.selfinfo_get_repos()
+        list_repos = ckan_repos if \
             ckan_repos else [
                 name for name in os.listdir(
                     ckan_repos_path) if os.path.isdir(
@@ -212,7 +208,7 @@ def gather_git_info():
                         ]
                 })
             except ValueError as e:
-                git_info['access_errors'][name] = e
+                git_info['access_errors'][name] = str(e)
     return git_info
 
 
@@ -278,20 +274,22 @@ def ckan_bluprints():
     from flask import current_app
     app = current_app
     data = {}
+    try:
+        for name, blueprint in app.blueprints.items():
+            data[name] = []
+            for rule in current_app.url_map.iter_rules():
+                if rule.endpoint.startswith(f"{name}."):
+                    view_func = current_app.view_functions[rule.endpoint]
+                    # signature = inspect.signature(view_func)
 
-    for name, blueprint in app.blueprints.items():
-        data[name] = []
-        for rule in current_app.url_map.iter_rules():
-            if rule.endpoint.startswith(f"{name}."):
-                view_func = current_app.view_functions[rule.endpoint]
-                # signature = inspect.signature(view_func)
-
-                data[name].append({
-                    'path': rule.rule,
-                    'methods': rule.methods,
-                    'route': rule.endpoint,
-                    'route_func': view_func.__name__,
-                })
+                    data[name].append({
+                        'path': rule.rule,
+                        'methods': list(rule.methods),
+                        'route': rule.endpoint,
+                        'route_func': view_func.__name__,
+                    })
+    except RuntimeError:
+        pass
 
     return data
 

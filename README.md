@@ -88,7 +88,7 @@ do:
 
 Example: `/path/to/partition /path/to/partition2 /path/to/partition3`
 
-`ckan.selfinfo.errors_limit` - Limit used to specify how much errors will be stored in Redis. By default this value is `20`.
+`ckan.selfinfo.errors_limit` - Limit used to specify how much errors will be stored in Redis. By default this value is `40`.
 
 `ckan.selfinfo.ckan_repos_path` - Path to the src folder where CKAN and CKAN Extensions stored at the environment. While provided, additional GIT Infromation will be granted. Make sure that there no other folders and files that are not related to CKAN are stored there. Example: `/usr/lib/ckan/default/src`
 
@@ -99,6 +99,24 @@ For Linux, keep in mind that the added folder in `ckan.selfinfo.ckan_repos_path`
 
 Errors for GIT now being stored below the original Table on GIT Info tab.
 
+`ckan.selfinfo.categories_list` - (Optional) List of categories that should be shown on Selfinfo Page or Returned using API. Example of usage `ckan.selfinfo.categories_list = errors ram_usage disk_usage`.
+By default shows all configured categories.
+
+Next section shows current categories list.
+
+## Full list of current categories:
+
+* python_modules
+* platform_info
+* ram_usage
+* disk_usage
+* git_info
+* freeze
+* errors
+* actions
+* auth_actions
+* blueprints
+* helpers
 
 ## Enable Errors Saving
 In CKAN INI file, need to add and modify few lines.
