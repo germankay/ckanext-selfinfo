@@ -17,7 +17,7 @@ def get_selfinfo(
     context: types.Context,
     data_dict: dict[str, Any],
 ) -> dict[str, Any]:
-    
+
     tk.check_access("sysadmin", context, data_dict)
 
     categories = self_config.selfinfo_get_categories()
@@ -37,9 +37,8 @@ def get_selfinfo(
     }
 
     data = {
-            key: func() for key, func in data.items() if not categories or key in categories
+        key: func() for key, func in data.items() if not categories or key in categories
     }
-    
 
     # data modification
     for item in p.PluginImplementations(ISelfinfo):

@@ -29,15 +29,15 @@ class TestUPDATE:
         }
 
         with pytest.raises(tk.NotAuthorized):
-            call_action("get_selfinfo", context=context) 
-       
-        context["user"] = sysadmin['name']
+            call_action("get_selfinfo", context=context)
+
+        context["user"] = sysadmin["name"]
         selfinfo: dict[str, Any] = tk.get_action("get_selfinfo")(context, {})
         ckan_info = selfinfo["groups"]["ckan"]["ckan"]
-        
+
         updated: dict[str, Any] = tk.get_action("update_last_module_check")(
-            context, {"module": "ckan"})
+            context, {"module": "ckan"}
+        )
 
         assert ckan_info != updated
         assert ckan_info["updated"] < updated["updated"]
-

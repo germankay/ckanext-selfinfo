@@ -13,12 +13,13 @@ from .utils import get_redis_key
 
 class SelfinfoErrorHandler(logging.Handler):
     """Custom handler to store exceptions."""
+
     def emit(self, record):
         if record.levelno >= logging.ERROR:
-            redis: Redis = connect_to_redis()    
+            redis: Redis = connect_to_redis()
             now: float = datetime.utcnow().timestamp()
             log_message = self.format(record)
-            redis_key = get_redis_key('errors')
+            redis_key = get_redis_key("errors")
 
             if not redis.exists(redis_key):
                 redis.set(redis_key, json.dumps([]))
@@ -33,5 +34,10 @@ class SelfinfoErrorHandler(logging.Handler):
                 current_url = tk.h.full_current_url()
             except AttributeError:
                 pass
-            erorrs.append({"error": log_message, "error_url": current_url if current_url else "Missing URL"})
+            erorrs.append(
+                {
+                    "error": log_message,
+                    "error_url": current_url if current_url else "Missing URL",
+                }
+            )
             redis.set(redis_key, json.dumps(erorrs))

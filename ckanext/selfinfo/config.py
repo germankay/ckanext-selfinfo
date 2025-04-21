@@ -5,15 +5,15 @@ from typing import Literal
 import ckan.plugins.toolkit as tk
 
 SELLFINFO_SET_URL = "ckan.selfinfo.page_url"
-SELLFINFO_DEFAULT_URL = '/ckan-admin/selfinfo'
-SELFINFO_REDIS_PREFIX = 'ckan.selfinfo.redis_prefix_key'
-SELFINFO_ERRORS_LIMIT = 'ckan.selfinfo.errors_limit'
-SELFINFO_REPOS_PATH = 'ckan.selfinfo.ckan_repos_path'
-SELFINFO_REPOS = 'ckan.selfinfo.ckan_repos'
-SELFINFO_PARTITIONS_PATH = 'ckan.selfinfo.partitions'
+SELLFINFO_DEFAULT_URL = "/ckan-admin/selfinfo"
+SELFINFO_REDIS_PREFIX = "ckan.selfinfo.redis_prefix_key"
+SELFINFO_ERRORS_LIMIT = "ckan.selfinfo.errors_limit"
+SELFINFO_REPOS_PATH = "ckan.selfinfo.ckan_repos_path"
+SELFINFO_REPOS = "ckan.selfinfo.ckan_repos"
+SELFINFO_PARTITIONS_PATH = "ckan.selfinfo.partitions"
 SELFINFO_REDIS_SUFFIX: Literal["_selfinfo"] = "_selfinfo"
-SELFINFO_CATEGORIES_LIST = 'ckan.selfinfo.categories_list'
-STORE_TIME: float = 604800.0 # one week
+SELFINFO_CATEGORIES_LIST = "ckan.selfinfo.categories_list"
+STORE_TIME: float = 604800.0  # one week
 # STORE_TIME: float = 1.0
 PYPI_URL: Literal["https://pypi.org/pypi/"] = "https://pypi.org/pypi/"
 
@@ -23,7 +23,7 @@ def selfinfo_get_path():
 
 
 def selfinfo_get_redis_prefix():
-    prefix = tk.config.get(SELFINFO_REDIS_PREFIX, '')
+    prefix = tk.config.get(SELFINFO_REDIS_PREFIX, "")
     return prefix + "_" if prefix else prefix
 
 
@@ -36,7 +36,8 @@ def selfinfo_get_repos_path():
 
 
 def selfinfo_get_repos():
-    return tk.config.get(SELFINFO_REPOS, '')
+    return tk.config.get(SELFINFO_REPOS, "")
+
 
 def selfinfo_get_partitions():
     return tk.config.get(SELFINFO_PARTITIONS_PATH)
