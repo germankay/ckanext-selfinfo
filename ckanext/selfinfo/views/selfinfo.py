@@ -10,9 +10,8 @@ from ckan import types
 import ckan.model as model
 import ckan.plugins.toolkit as tk
 from ckan.lib.redis import connect_to_redis, Redis
-from ckanext.selfinfo.utils import get_redis_key
-from ckanext.selfinfo.config import selfinfo_get_path
-
+from ckanext.selfinfo.utils import get_redis_key, retrieve_additionals_redis_keys_info
+import ckanext.selfinfo.config as self_config
 
 selfinfo = Blueprint("selfinfo", __name__)
 
@@ -42,14 +41,21 @@ class SelfinfoView(MethodView):
 
             return tk.redirect_to("selfinfo.index")
 
-        data: dict[str, Any] = tk.get_action("get_selfinfo")({}, {})
-        status_show: dict[str, Any] = tk.get_action("status_show")({}, {})
+        data: dict[str, Any] = tk.get_action(
+            self_config.selfinfo_get_main_action_name()
+        )({}, {})
+
+        profiles = {"default": data}
+        additional_keys = self_config.selfinfo_get_additional_redis_keys()
+
+        if additional_keys:
+            for key in additional_keys:
+                profiles[key] = retrieve_additionals_redis_keys_info(key)
 
         return tk.render(
             "selfinfo/index.html",
             {
-                "data": data,
-                "status_show": status_show,
+                "profiles": profiles,
             },
         )
 
@@ -99,6 +105,6 @@ def selfinfo_get_ram():
 
 
 selfinfo.add_url_rule(
-    selfinfo_get_path(),
+    self_config.selfinfo_get_path(),
     view_func=SelfinfoView.as_view("index"),
 )

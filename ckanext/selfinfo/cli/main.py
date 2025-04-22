@@ -1,10 +1,15 @@
 from __future__ import annotations
 
+import json
 from typing import Any
 import click
 from prettytable import PrettyTable
+from datetime import datetime
 
+from ckan.lib.redis import connect_to_redis, Redis
 import ckan.plugins.toolkit as tk
+
+import ckanext.selfinfo.config as self_config
 
 
 @click.argument("module", required=True)
@@ -20,7 +25,9 @@ def update_module_info(module: str):
 def get_selfinfo():
     # TO DO
     # Remove or re-implement
-    data = tk.get_action("get_selfinfo")({"ignore_auth": True}, {})
+    data = tk.get_action(self_config.selfinfo_get_main_action_name())(
+        {"ignore_auth": True}, {}
+    )
 
     platform_info: dict[str, Any] = data.get("platform_info", {})
     ram_usage: dict[str, Any] = data.get("ram_usage", {})
@@ -66,3 +73,25 @@ def get_selfinfo():
                 )
 
         click.echo(item_table)
+
+
+@click.argument("key", required=True)
+@click.argument("label", required=False)
+def write_selfinfo(key: str, label: str):
+    data = tk.get_action(self_config.selfinfo_get_main_action_name())(
+        {"ignore_auth": True}, {}
+    )
+    data["label"] = label if label else key
+    data["provided_on"] = datetime.utcnow().timestamp()
+    redis: Redis = connect_to_redis()
+    selfinfo_key = "selfinfo_" + key
+    redis.set(selfinfo_key, json.dumps(data))
+    click.echo(f"Stored Selfinfo data under '{key}' key.")
+
+
+@click.argument("key", required=True)
+def delete_selfinfo_redis_key(key: str):
+    redis: Redis = connect_to_redis()
+    selfinfo_key = "selfinfo_" + key
+    redis.delete(selfinfo_key)
+    click.echo(f"Deleted Selfinfo data under '{key}' key.")

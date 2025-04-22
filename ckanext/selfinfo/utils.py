@@ -17,6 +17,7 @@ import functools
 import types
 
 from ckan.lib.redis import connect_to_redis, Redis
+import ckan.plugins.toolkit as tk
 
 import ckanext.selfinfo.config as self_config
 
@@ -68,8 +69,8 @@ def get_python_modules_info(force_reset: bool = False) -> dict[str, Any]:
                     for k, v in redis.hgetall(redis_key).items()
                 }
 
-                groups[group][module]["updated"] = datetime.fromtimestamp(
-                    float(groups[group][module]["updated"])
+                groups[group][module]["updated"] = str(
+                    datetime.fromtimestamp(float(groups[group][module]["updated"]))
                 )
 
     groups["ckanext"] = dict(sorted(groups["ckanext"].items()))
@@ -345,4 +346,22 @@ def ckan_helpers():
                 "chained": chained,
             }
         )
+    return data
+
+
+def get_status_show():
+    return tk.get_action("status_show")({}, {})
+
+
+def retrieve_additionals_redis_keys_info(key):
+    redis: Redis = connect_to_redis()
+    try:
+        selfinfo_key = "selfinfo_" + key
+        data = json.loads(redis.get(selfinfo_key))
+        if data.get("provided_on"):
+            data["provided_on"] = str(datetime.fromtimestamp(data["provided_on"]))
+    except TypeError:
+        data = {}
+        log.error(f"Cannot retrieve data using '{key}' from Redis.")
+
     return data

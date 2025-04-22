@@ -9,6 +9,8 @@ import ckan.plugins.toolkit as tk
 from ckan.tests.helpers import call_action
 import ckan.tests.factories as factories
 
+import ckanext.selfinfo.config as self_config
+
 current_path: list[str] = os.getcwd().split("/")
 current_path.pop()
 updated_path: str = "/".join(current_path)
@@ -29,10 +31,12 @@ class TestUPDATE:
         }
 
         with pytest.raises(tk.NotAuthorized):
-            call_action("get_selfinfo", context=context)
+            call_action(self_config.selfinfo_get_main_action_name(), context=context)
 
         context["user"] = sysadmin["name"]
-        selfinfo: dict[str, Any] = tk.get_action("get_selfinfo")(context, {})
+        selfinfo: dict[str, Any] = tk.get_action(
+            self_config.selfinfo_get_main_action_name()
+        )(context, {})
         ckan_info = selfinfo["groups"]["ckan"]["ckan"]
 
         updated: dict[str, Any] = tk.get_action("update_last_module_check")(

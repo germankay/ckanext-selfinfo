@@ -14,7 +14,7 @@
         </div>
     </h2>
     <div>
-        {% if data.errors|length %}
+        {% if data.errors|length and profile == 'default' %}
             <form action="">
                 <button class="btn btn-primary" type="submit" name="drop_errors" value="true">{{ _('Clear Errors') }}</button>
             </form>

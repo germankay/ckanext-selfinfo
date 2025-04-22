@@ -8,6 +8,8 @@ groups:
               This configuration is needed, when you use Redis with multiple CKAN apps
           - key: ckan.selfinfo.page_url
             example: /randompage
+          - key: ckan.selfinfo.main_action_name
+            example: get_selfinfo_random
           - key: ckan.selfinfo.partitions
             type: list
             default: '/'
@@ -22,5 +24,8 @@ groups:
             description: List of CKAN Extension folders separated by space (ckanext-scheming ckanext-spatial ckanext-xloader).
           - key: ckan.selfinfo.categories_list
             type: list
-            example: 'python_modules platform_info ram_usage disk_usage git_info freeze errors actions auth blueprints helpers'
+            example: 'python_modules platform_info ram_usage disk_usage git_info freeze errors actions auth blueprints helpers status_show'
             description: List of categories that should be available on the Selfinfo page.
+          - key: ckan.selfinfo.additional_profiles_using_redis_keys
+            type: list
+            example: 'additional_redis_key_1 additional_redis_key_2'

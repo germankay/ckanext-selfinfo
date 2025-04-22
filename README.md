@@ -13,6 +13,8 @@ On CKAN admin page `/ckan-admin/selfinfo`, admin can see such information as:
     - RAM Usage in %
     - RAM Usage GB
     - RAM Total
+    - Monitor feature
+        - Top 10 processes shown
 * Disk Space
     - Path
     - Disk Usage in %
@@ -82,7 +84,9 @@ do:
 
 `ckan.selfinfo.redis_prefix_key` - This configuration is needed, when you use Redis with multiple CKAN apps. In order to have a unique key per portal, this configuration can be used. Example `ckan_test` will be used as `ckan_test_errors_selinfo`.
 
-`ckan.selfinfo.page_url` - Used to provide alternative URL to Selfinfo Admin Page. By default it is set to `/ckan-admin/selfinfo`.
+`ckan.selfinfo.page_url` - (Recommended to use) Used to provide alternative URL to Selfinfo Admin Page. By default it is set to `/ckan-admin/selfinfo`.
+
+`ckan.selfinfo.main_action_name` - (Recommended to use) Used to provide an alternative name for the main action of selfinfo. By default it is set to `get_selfinfo`.
 
 `ckan.selfinfo.partitions` - Used for representing disk space. The value is comma separated paths. By default the value is `/`, which is usually the root.
 
@@ -98,6 +102,10 @@ Example: `/path/to/partition /path/to/partition2 /path/to/partition3`
 For Linux, keep in mind that the added folder in `ckan.selfinfo.ckan_repos_path` should have the same owner as the one that runs the application (e.g. if the application runs from `ckan` User in the system, then ckanext-scheming folder owner should be `ckan`), otherwise there will be an error related to ownership of the repository.
 
 Errors for GIT now being stored below the original Table on GIT Info tab.
+
+`ckan.selfinfo.additional_profiles_using_redis_keys` - Retrieves selfinfo data on page from external sources that store selfinfo data using `write-selfinfo` cli command under unique Redis key. The stored data should be under same Redis connection as per the "default" profile.
+
+Example: `unique_redis_key_1 unique_redis_key_2`
 
 `ckan.selfinfo.categories_list` - (Optional) List of categories that should be shown on Selfinfo Page or Returned using API. Example of usage `ckan.selfinfo.categories_list = errors ram_usage disk_usage`.
 By default shows all configured categories.
@@ -117,6 +125,7 @@ Next section shows current categories list.
 * auth_actions
 * blueprints
 * helpers
+* status_show
 
 ## Enable Errors Saving
 In CKAN INI file, need to add and modify few lines.
@@ -141,6 +150,14 @@ In `logger_ckan` modify `handlers`, example:
     qualname = ckan
     propagate = 0
 
+
+## CLI
+
+`selfinfo write-selfinfo` - Stores selfinfo data under unique Redis key. This data can be retrieved by selfinfo page if `ckan.selfinfo.additional_profiles_using_redis_keys` is set with the stored keys.
+
+Arguments:
+* key - Unique Redis key. Example `CKAN_Additional_Selfinfo_Source`
+* label - (Optional) Label to be displayed on selfinfo page. Example `"Additional Selfinfo Source"`. If not provided, `key` will be used as label instead.
 
 ## Tests
 

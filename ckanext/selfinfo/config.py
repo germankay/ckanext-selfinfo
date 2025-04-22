@@ -6,6 +6,8 @@ import ckan.plugins.toolkit as tk
 
 SELLFINFO_SET_URL = "ckan.selfinfo.page_url"
 SELLFINFO_DEFAULT_URL = "/ckan-admin/selfinfo"
+SELLFINFO_SET_MAIN_ACTION_NAME = "ckan.selfinfo.main_action_name"
+SELLFINFO_DEFAULT_MAIN_ACTION_NAME = "get_selfinfo"
 SELFINFO_REDIS_PREFIX = "ckan.selfinfo.redis_prefix_key"
 SELFINFO_ERRORS_LIMIT = "ckan.selfinfo.errors_limit"
 SELFINFO_REPOS_PATH = "ckan.selfinfo.ckan_repos_path"
@@ -13,6 +15,9 @@ SELFINFO_REPOS = "ckan.selfinfo.ckan_repos"
 SELFINFO_PARTITIONS_PATH = "ckan.selfinfo.partitions"
 SELFINFO_REDIS_SUFFIX: Literal["_selfinfo"] = "_selfinfo"
 SELFINFO_CATEGORIES_LIST = "ckan.selfinfo.categories_list"
+SELFINFO_ADDITIONAL_PROFILES_USING_REDIS_KEYS = (
+    "ckan.selfinfo.additional_profiles_using_redis_keys"
+)
 STORE_TIME: float = 604800.0  # one week
 # STORE_TIME: float = 1.0
 PYPI_URL: Literal["https://pypi.org/pypi/"] = "https://pypi.org/pypi/"
@@ -20,6 +25,12 @@ PYPI_URL: Literal["https://pypi.org/pypi/"] = "https://pypi.org/pypi/"
 
 def selfinfo_get_path():
     return tk.config.get(SELLFINFO_SET_URL, SELLFINFO_DEFAULT_URL)
+
+
+def selfinfo_get_main_action_name():
+    return tk.config.get(
+        SELLFINFO_SET_MAIN_ACTION_NAME, SELLFINFO_DEFAULT_MAIN_ACTION_NAME
+    )
 
 
 def selfinfo_get_redis_prefix():
@@ -45,3 +56,7 @@ def selfinfo_get_partitions():
 
 def selfinfo_get_categories():
     return tk.config.get(SELFINFO_CATEGORIES_LIST)
+
+
+def selfinfo_get_additional_redis_keys():
+    return tk.config.get(SELFINFO_ADDITIONAL_PROFILES_USING_REDIS_KEYS)

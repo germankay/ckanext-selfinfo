@@ -9,9 +9,9 @@
         </thead>
         <tbody>
             <tr>
-                <td>{{ status_show.site_title }}</td>
-                <td>{{ status_show.ckan_version }}</td>
-                <td>{{ status_show.locale_default }}</td>
+                <td>{{ data.status_show.site_title }}</td>
+                <td>{{ data.status_show.ckan_version }}</td>
+                <td>{{ data.status_show.locale_default }}</td>
             </tr>
         </tbody>
     </table>
@@ -26,7 +26,7 @@
             <div id="extensionsCollapse" class="accordion-collapse collapse" aria-labelledby="extensions-heading">
               <div class="accordion-body">
                 <ul class="list-group">
-                    {% for extension in status_show.extensions %}
+                    {% for extension in data.status_show.extensions %}
                     <li class="list-group-item">
                         {{ extension }}
                     </li>

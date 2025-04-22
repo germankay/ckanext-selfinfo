@@ -34,6 +34,7 @@ def get_selfinfo(
         "auth_actions": selfutils.ckan_auth_actions,
         "blueprints": selfutils.ckan_bluprints,
         "helpers": selfutils.ckan_helpers,
+        "status_show": selfutils.get_status_show,
     }
 
     data = {
