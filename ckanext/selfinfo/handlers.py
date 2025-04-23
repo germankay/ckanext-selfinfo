@@ -34,6 +34,9 @@ class SelfinfoErrorHandler(logging.Handler):
                 current_url = tk.h.full_current_url()
             except AttributeError:
                 pass
+            except RuntimeError:
+                pass
+
             erorrs.append(
                 {
                     "error": log_message,
