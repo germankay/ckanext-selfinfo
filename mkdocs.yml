@@ -1,4 +1,7 @@
 site_name: ckanext-selfinfo
+site_url: https://datashades.github.io/ckanext-selfinfo/
+
+repo_url:  https://github.com/DataShades/ckanext-selfinfo
 
 theme:
   name: material
