@@ -1,0 +1,1 @@
+Having CKAN Core version 2.10+ and Redis configured

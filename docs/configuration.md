@@ -1,0 +1,1 @@
+Out of the box, not all information is shown, some of it should be additionally configured to appear on the Selinfo page and endpoint.
