@@ -532,6 +532,143 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Profiles
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Profiles
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../profiles/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Cron Based
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            Cron Based
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../profiles/redis_key/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Selinfo from Redis key
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -589,7 +726,9 @@
 <h2 id="setup-secure-url-and-action-name">Setup secure URL and Action name</h2>
 <p>Out of the box, Selfinfo page registered under <code>/ckan-admin/selfinfo</code> URL, which can is only protected by Sysadmin access check.</p>
 <p>To add an additional layer of protection, provide an custom path that will modify the original path, so other wont know under what URL it is actually registered. This can be done by adding <code>ckan.selfinfo.page_url</code> to CKAN config, where that value is your custom URL.</p>
+<p><img alt="Modifeid Main Selfinfo URL" src="../assets/modified_url.png" /></p>
 <p>Same goes for main Selfinfo endpoint that provides same information, but in API format. By default it uses <code>get_selfinfo</code> endpoint and to modify it using <code>ckan.selfinfo.main_action_name</code> CKAN config, where that value is the new action name.</p>
+<p><img alt="Modifeid Main Selfinfo Action" src="../assets/modified_action_name.png" /></p>
 
 
 

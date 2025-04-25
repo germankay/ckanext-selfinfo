@@ -1,4 +1,7 @@
 ## Enable Errors Saving
+
+![Enabled Errors storing](assets/errors.png)
+
 In CKAN INI file, need to add and modify few lines.
 
 After `handler_console` section add:

@@ -18,4 +18,8 @@ nav:
     - GIT Info: git_info.md
     - Categories: categories.md
   - CLI: cli.md
+  - Profiles:
+    - Overview: profiles/overview.md
+    - Cron Based:
+      - Selinfo from Redis key: profiles/redis_key.md
 
