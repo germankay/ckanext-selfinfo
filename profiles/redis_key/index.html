@@ -727,8 +727,8 @@
 <p>Using <code>ckan selfinfo write-selfinfo</code> cli command, you can store Selfinfo information about the CKAN APP under an unique Redis key, additionally adding label to it.</p>
 <p>The additional evironment should use same Redis connection, as the default profile in this example.</p>
 <p>Example of Cron job, running every 10 minutes:</p>
-<pre><code>*/10 * * * * /usr/lib/ckan/VIRTUAL_ENV/bin/ckan -c CONFIG_PATH selfinfo write-selfinfo UNIQUE_REDIS_KEY "CUSTOM LABEL" &gt; /dev/null 2&gt;&amp;1
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code>*/10 * * * * /usr/lib/ckan/VIRTUAL_ENV/bin/ckan -c CONFIG_PATH selfinfo write-selfinfo UNIQUE_REDIS_KEY &quot;CUSTOM LABEL&quot; &gt; /dev/null 2&gt;&amp;1
+</code></pre></div>
 <p>Then you need to add this custom key to Selnfinfo config param <code>ckan.selfinfo.additional_profiles_using_redis_keys</code>, after reload the additional profile will be displayed.</p>
 <p><img alt="Additional Profile using Cron" src="../../assets/cron_redis_unique_key.png" /></p>
 
@@ -779,7 +779,7 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../../assets/javascripts/bundle.c8b220af.min.js"></script>
