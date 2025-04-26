@@ -18,6 +18,7 @@ import types
 
 from ckan.lib.redis import connect_to_redis, Redis
 import ckan.plugins.toolkit as tk
+from ckan.lib import jobs
 
 import ckanext.selfinfo.config as self_config
 
@@ -352,6 +353,20 @@ def ckan_helpers():
 def get_status_show():
     return tk.get_action("status_show")({}, {})
 
+
+def get_ckan_queues():
+    data = {}
+    for queue in jobs.get_all_queues():
+        jobs_counts = queue.count
+        data[queue.name] = {
+            "count": jobs_counts,
+            "jobs": [
+                jobs.dictize_job(job) for job in queue.get_jobs(0, 100)
+            ],
+            "above_the_limit": True if jobs_counts > 100 else False
+        }
+
+    return data
 
 def retrieve_additionals_redis_keys_info(key):
     redis: Redis = connect_to_redis()

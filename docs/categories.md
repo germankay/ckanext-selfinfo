@@ -8,15 +8,19 @@ See [Config Settings](config_settings.md) for an example of this CKAN Config.
 
 Here are the current list of categories to choose:
 
-* python_modules
-* platform_info
-* ram_usage
-* disk_usage
-* git_info
-* freeze
-* errors
-* actions
-* auth_actions
-* blueprints
-* helpers
-* status_show
+``` py
+ckan.selfinfo.categories_list =
+    python_modules
+    platform_info
+    ram_usage
+    disk_usage
+    git_info
+    freeze
+    errors
+    actions
+    auth_actions
+    blueprints
+    helpers
+    status_show
+    ckan_queues
+```

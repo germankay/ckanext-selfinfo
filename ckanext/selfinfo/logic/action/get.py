@@ -35,6 +35,7 @@ def get_selfinfo(
         "blueprints": selfutils.ckan_bluprints,
         "helpers": selfutils.ckan_helpers,
         "status_show": selfutils.get_status_show,
+        "ckan_queues": selfutils.get_ckan_queues
     }
 
     data = {

@@ -53,6 +53,9 @@
                                 {% if data.freeze %}
                                 <a href="#nav-freeze-{{ profile }}" class="nav-link" id="nav-freeze-{{ profile }}-tab" data-bs-toggle="tab" data-bs-target="#nav-freeze-{{ profile }}" role="tab" aria-controls="nav-freeze-{{ profile }}" aria-selected="false">PIP Freeze</a>
                                 {% endif %}
+                                {% if data.ckan_queues %}
+                                <a href="#nav-ckan_queues-{{ profile }}" class="nav-link" id="nav-ckan_queues-{{ profile }}-tab" data-bs-toggle="tab" data-bs-target="#nav-ckan_queues-{{ profile }}" role="tab" aria-controls="nav-ckan_queues-{{ profile }}" aria-selected="false">CKAN Queues</a>
+                                {% endif %}
                                 {% if 'errors' in data %}
                                 <a href="#nav-errors-{{ profile }}" class="nav-link" id="nav-errors-{{ profile }}-tab" data-bs-toggle="tab" data-bs-target="#nav-errors-{{ profile }}" role="tab" aria-controls="nav-errors-{{ profile }}" aria-selected="false">Errors</a>
                                 {% endif %}
@@ -79,6 +82,11 @@
                             {% if data.freeze %}
                             <div class="tab-pane fade mt-3" id="nav-freeze-{{ profile }}" role="tabpanel" aria-labelledby="nav-freeze-tab">
                                 {% snippet 'selfinfo/snippets/self_freeze.html', profile=profile, data=data, full_url=full_url, id='nav-freeze-' ~ profile %}
+                            </div>
+                            {% endif %}
+                            {% if data.ckan_queues %}
+                            <div class="tab-pane fade mt-3" id="nav-ckan_queues-{{ profile }}" role="tabpanel" aria-labelledby="nav-ckan_queues-tab">
+                                {% snippet 'selfinfo/snippets/ckan_queues.html', profile=profile, data=data, full_url=full_url, id='nav-ckan_queues-' ~ profile %}
                             </div>
                             {% endif %}
                             {% if 'errors' in data %}

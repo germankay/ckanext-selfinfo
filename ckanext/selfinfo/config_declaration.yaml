@@ -25,7 +25,7 @@ groups:
             description: List of CKAN Extension folders separated by space (ckanext-scheming ckanext-spatial ckanext-xloader).
           - key: ckan.selfinfo.categories_list
             type: list
-            example: 'python_modules platform_info ram_usage disk_usage git_info freeze errors actions auth blueprints helpers status_show'
+            example: 'python_modules platform_info ram_usage disk_usage git_info freeze errors actions auth blueprints helpers status_show ckan_queues'
             description: List of categories that should be available on the Selfinfo page.
           - key: ckan.selfinfo.additional_profiles_using_redis_keys
             type: list

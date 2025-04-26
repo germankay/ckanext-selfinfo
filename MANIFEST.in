@@ -4,3 +4,4 @@ include requirements.txt
 recursive-include ckanext/selfinfo *.html *.json *.js *.less *.css *.mo *.yml
 recursive-include ckanext/selfinfo/migration *.ini *.py *.mako
 recursive-include ckanext/* config_declaration.yaml
+exclude site/*
