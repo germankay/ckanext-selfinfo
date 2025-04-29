@@ -37,7 +37,6 @@ def get_redis_key(name):
         + self_config.SELFINFO_REDIS_SUFFIX
     )
 
-
 def get_python_modules_info(force_reset: bool = False) -> dict[str, Any]:
     redis: Redis = connect_to_redis()
     now: float = datetime.utcnow().timestamp()
