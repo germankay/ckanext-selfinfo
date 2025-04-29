@@ -27,6 +27,9 @@ log = logging.getLogger(__name__)
 
 
 def get_redis_key(name):
+    """
+    Generate a Redis key by combining a prefix, the provided name, and a suffix.
+    """
     return (
         self_config.selfinfo_get_redis_prefix()
         + name

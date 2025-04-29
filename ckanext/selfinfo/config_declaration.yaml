@@ -6,6 +6,7 @@ groups:
             example: ckan_pure
             description: |
               This configuration is needed, when you use Redis with multiple CKAN apps
+            default: ''
           - key: ckan.selfinfo.page_url
             example: /randompage
           - key: ckan.selfinfo.main_action_name
