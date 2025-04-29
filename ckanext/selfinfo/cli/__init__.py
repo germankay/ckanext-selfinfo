@@ -15,4 +15,5 @@ def selfinfo():
 selfinfo.command(main.update_module_info)
 selfinfo.command(main.get_selfinfo)
 selfinfo.command(main.write_selfinfo)
+selfinfo.command(main.write_selfinfo_duplicated_env)
 selfinfo.command(main.delete_selfinfo_redis_key)

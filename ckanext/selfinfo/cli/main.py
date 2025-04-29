@@ -10,6 +10,7 @@ from ckan.lib.redis import connect_to_redis, Redis
 import ckan.plugins.toolkit as tk
 
 import ckanext.selfinfo.config as self_config
+import ckanext.selfinfo.utils as self_utils
 
 
 @click.argument("module", required=True)
@@ -87,6 +88,27 @@ def write_selfinfo(key: str, label: str):
     selfinfo_key = "selfinfo_" + key
     redis.set(selfinfo_key, json.dumps(data))
     click.echo(f"Stored Selfinfo data under '{key}' key.")
+
+
+def write_selfinfo_duplicated_env():
+    internal_ip = self_utils.selfinfo_retrieve_iternal_ip()
+    data = tk.get_action(self_config.selfinfo_get_main_action_name())(
+        {"ignore_auth": True}, {}
+    )
+    data["label"] = f"{internal_ip} Env"
+    data["provided_on"] = datetime.utcnow().timestamp()
+    
+    shared_categories = self_config.selfinfo_get_dulicated_envs_shared_categories()
+
+    if shared_categories:
+        for category in shared_categories:
+            if category in data:
+                del(data[category])
+
+    redis: Redis = connect_to_redis()
+    selfinfo_key = "selfinfo_duplicated_env_" + internal_ip.replace('.', '_')
+    redis.set(selfinfo_key, json.dumps(data))
+    click.echo(f"Stored Selfinfo data under '{selfinfo_key}' key.")
 
 
 @click.argument("key", required=True)

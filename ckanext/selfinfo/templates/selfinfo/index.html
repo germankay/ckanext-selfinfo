@@ -22,7 +22,7 @@
                 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                     {% for profile, data in profiles.items() %}
                         <li class="nav-item" role="presentation">
-                        <a href="#pills-selfinfo-{{ profile }}" class="nav-link {% if profile == 'default' %} active {% endif %}" id="pills-selfinfo-{{ profile }}-tab" data-bs-toggle="pill" data-bs-target="#pills-selfinfo-{{ profile }}" type="button" role="tab" aria-controls="pills-selfinfo-{{ profile }}" aria-selected="true">
+                        <a href="#pills-selfinfo-{{ profile }}" class="nav-link {% if loop.index == 1 %} active {% endif %}" id="pills-selfinfo-{{ profile }}-tab" data-bs-toggle="pill" data-bs-target="#pills-selfinfo-{{ profile }}" type="button" role="tab" aria-controls="pills-selfinfo-{{ profile }}" aria-selected="true">
                             {% if "label" in data %}
                                 {{ data.label }}
                             {% else %}
@@ -34,7 +34,7 @@
                 </ul>
                 <div class="tab-content d-block" id="pills-tabContent">
                     {% for profile, data in profiles.items() %}
-                    <div class="tab-pane fade {% if profile == 'default' %} show active {% endif %}" id="pills-selfinfo-{{ profile }}" role="tabpanel" aria-labelledby="pills-selfinfo-{{ profile }}-tab">
+                    <div class="tab-pane fade {% if loop.index == 1 %} show active {% endif %}" id="pills-selfinfo-{{ profile }}" role="tabpanel" aria-labelledby="pills-selfinfo-{{ profile }}-tab">
                         {% if data.provided_on %}
                             <div class="badge bg-success mb-3">
                                 Provided on: {{ h.render_datetime(data.provided_on, date_format='%d/%m/%y %H:%M') }}
@@ -146,19 +146,23 @@
         });
 
         grabRam = false;
-        document.getElementById("ram-monitor").addEventListener("click", function() {
-            if (this.classList.contains('active')) {
-                this.textContent = "Start monitoring";
-                grabRam = false;
-            } else {
-                this.textContent = "Stop monitoring";
-                grabRam = true;
-            }
-            this.classList.toggle('active');
-        });
+        var ram_monitor = document.getElementById("ram-monitor");
 
-        function getRam() {
-            return grabRam;
+        if (ram_monitor) {
+            document.getElementById("ram-monitor").addEventListener("click", function() {
+                if (this.classList.contains('active')) {
+                    this.textContent = "Start monitoring";
+                    grabRam = false;
+                } else {
+                    this.textContent = "Stop monitoring";
+                    grabRam = true;
+                }
+                this.classList.toggle('active');
+            });
+            function getRam() {
+                return grabRam;
+            }
         }
+
     </script>
 {% endblock %}

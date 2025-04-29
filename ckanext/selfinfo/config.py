@@ -12,6 +12,8 @@ SELFINFO_ERRORS_LIMIT = "ckan.selfinfo.errors_limit"
 SELFINFO_REPOS_PATH = "ckan.selfinfo.ckan_repos_path"
 SELFINFO_REPOS = "ckan.selfinfo.ckan_repos"
 SELFINFO_PARTITIONS_PATH = "ckan.selfinfo.partitions"
+SELFINFO_DUPLICATED_ENVS_MODE = "ckan.selfinfo.duplicated_envs.mode"
+SELFINFO_DUPLICATED_ENVS_SHARED_CATEGORIES = "ckan.selfinfo.duplicated_envs.shared_categories"
 SELFINFO_REDIS_SUFFIX: Literal["_selfinfo"] = "_selfinfo"
 SELFINFO_CATEGORIES_LIST = "ckan.selfinfo.categories_list"
 SELFINFO_ADDITIONAL_PROFILES_USING_REDIS_KEYS = (
@@ -33,7 +35,7 @@ def selfinfo_get_main_action_name():
 
 
 def selfinfo_get_redis_prefix():
-    prefix = tk.config.get(SELFINFO_REDIS_PREFIX, "")
+    prefix = tk.config.get(SELFINFO_REDIS_PREFIX)
     return prefix + "_" if prefix else prefix
 
 
@@ -59,3 +61,11 @@ def selfinfo_get_categories():
 
 def selfinfo_get_additional_redis_keys():
     return tk.config.get(SELFINFO_ADDITIONAL_PROFILES_USING_REDIS_KEYS)
+
+
+def selfinfo_get_dulicated_envs_mode():
+    return tk.config.get(SELFINFO_DUPLICATED_ENVS_MODE)
+
+
+def selfinfo_get_dulicated_envs_shared_categories():
+    return tk.config.get(SELFINFO_DUPLICATED_ENVS_SHARED_CATEGORIES)

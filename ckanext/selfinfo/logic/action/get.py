@@ -20,7 +20,7 @@ def get_selfinfo(
 
     tk.check_access("sysadmin", context, data_dict)
 
-    categories = self_config.selfinfo_get_categories()
+    limited_categories = self_config.selfinfo_get_categories()
 
     data = {
         "python_modules": selfutils.get_python_modules_info,
@@ -37,9 +37,14 @@ def get_selfinfo(
         "status_show": selfutils.get_status_show,
         "ckan_queues": selfutils.get_ckan_queues
     }
+    
+    if categories := data_dict.get("categories"):
+        data = {
+            key: data[key] for key in data if not categories or key in categories
+        }
 
     data = {
-        key: func() for key, func in data.items() if not categories or key in categories
+        key: func() for key, func in data.items() if not limited_categories or key in limited_categories
     }
 
     # data modification

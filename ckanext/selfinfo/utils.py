@@ -15,6 +15,7 @@ import distro
 import inspect
 import functools
 import types
+import socket
 
 from ckan.lib.redis import connect_to_redis, Redis
 import ckan.plugins.toolkit as tk
@@ -383,3 +384,34 @@ def retrieve_additionals_redis_keys_info(key):
         log.error(f"Cannot retrieve data using '{key}' from Redis.")
 
     return data
+
+def retrieve_additional_selfinfo_by_keys(key):
+    redis: Redis = connect_to_redis()
+    try:
+        selfinfo_key = key
+        data = json.loads(redis.get(selfinfo_key))
+        if data.get("provided_on"):
+            data["provided_on"] = str(datetime.fromtimestamp(data["provided_on"]))
+    except TypeError:
+        data = {}
+        log.error(f"Cannot retrieve data using '{key}' from Redis.")
+
+    return data
+
+
+def selfinfo_retrieve_iternal_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+    except Exception:
+        ip = '127.0.0.1'
+    finally:
+        s.close()
+
+    return ip
+
+
+def selfinfo_internal_ip_keys():
+    redis: Redis = connect_to_redis()
+    return [i.decode("utf-8") for i in redis.scan_iter(match="selfinfo_duplicated_env_*")]

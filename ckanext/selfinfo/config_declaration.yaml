@@ -31,3 +31,8 @@ groups:
           - key: ckan.selfinfo.additional_profiles_using_redis_keys
             type: list
             example: 'additional_redis_key_1 additional_redis_key_2'
+          - key: ckan.selfinfo.duplicated_envs.mode
+            type: bool
+            default: false
+          - key: ckan.selfinfo.duplicated_envs.shared_categories
+            type: list

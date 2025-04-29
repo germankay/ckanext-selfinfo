@@ -10,7 +10,11 @@ from ckan import types
 import ckan.model as model
 import ckan.plugins.toolkit as tk
 from ckan.lib.redis import connect_to_redis, Redis
-from ckanext.selfinfo.utils import get_redis_key, retrieve_additionals_redis_keys_info
+from ckanext.selfinfo.utils import (
+    get_redis_key,
+    retrieve_additional_selfinfo_by_keys,
+    selfinfo_internal_ip_keys,
+)
 import ckanext.selfinfo.config as self_config
 
 selfinfo = Blueprint("selfinfo", __name__)
@@ -40,17 +44,23 @@ class SelfinfoView(MethodView):
             redis.set(key, json.dumps([]))
 
             return tk.redirect_to("selfinfo.index")
+        additional_keys = []
+        profiles = {}
 
-        data: dict[str, Any] = tk.get_action(
-            self_config.selfinfo_get_main_action_name()
-        )({}, {})
+        if not self_config.selfinfo_get_dulicated_envs_mode():
+            data: dict[str, Any] = tk.get_action(
+                self_config.selfinfo_get_main_action_name()
+            )({}, {})
 
-        profiles = {"default": data}
-        additional_keys = self_config.selfinfo_get_additional_redis_keys()
+            profiles["default"] = data
+        else:
+            additional_keys.extend(selfinfo_internal_ip_keys())
+
+        additional_keys.extend(["selfinfo_" + key for key in self_config.selfinfo_get_additional_redis_keys()])
 
         if additional_keys:
             for key in additional_keys:
-                profiles[key] = retrieve_additionals_redis_keys_info(key)
+                profiles[key] = retrieve_additional_selfinfo_by_keys(key)
 
         return tk.render(
             "selfinfo/index.html",
