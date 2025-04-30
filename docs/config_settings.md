@@ -26,6 +26,6 @@ Example: `unique_redis_key_1 unique_redis_key_2`
 **`ckan.selfinfo.categories_list`** - (Optional) List of categories that should be shown on Selfinfo Page or Returned using API. Example of usage `ckan.selfinfo.categories_list = errors ram_usage disk_usage`.
 By default shows all configured categories.
 
-**`ckan.selfinfo.duplicated_envs.mode`** - (Optional) By enabling, removes `default` profile and replaces it by duplicated Envs mentioned in [Selfinfo under Redis internal env IP key](../profiles/duplicated_env/) section. By default set to `False`.
+**`ckan.selfinfo.duplicated_envs.mode`** - (Optional) By enabling, removes `default` profile and replaces it by duplicated Envs mentioned in [Selfinfo under Redis internal env IP key](profiles/duplicated_env.md) section. By default set to `False`.
 
-**`ckan.selfinfo.categories_list`** - (Optional) Used in combination with ckan.selfinfo.duplicated_envs.mode to specify, which categories are going to be shared between the duplicated Envs. Mentioned in [Shared categories](../profiles/shared_categories/).
+**`ckan.selfinfo.categories_list`** - (Optional) Used in combination with ckan.selfinfo.duplicated_envs.mode to specify, which categories are going to be shared between the duplicated Envs. Mentioned in [Shared categories](profiles/shared_categories.md).
