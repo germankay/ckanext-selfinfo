@@ -59,8 +59,9 @@
                                 {% if 'errors' in data %}
                                 <a href="#nav-errors-{{ profile }}" class="nav-link" id="nav-errors-{{ profile }}-tab" data-bs-toggle="tab" data-bs-target="#nav-errors-{{ profile }}" role="tab" aria-controls="nav-errors-{{ profile }}" aria-selected="false">Errors</a>
                                 {% endif %}
-                                {% block selfinfo_main_nav_tabs %}
-                                {% endblock %}
+
+                                {% snippet 'selfinfo/snippets/additional_navigation_tabs.html', profile=profile, data=data, full_url=full_url %}
+
                             </div>
                         </nav>
                     
@@ -94,8 +95,8 @@
                                 {% snippet 'selfinfo/snippets/self_errors.html', profile=profile, data=data, full_url=full_url, id='nav-errors-' ~ profile %}
                             </div>
                             {% endif %}
-                            {% block selfinfo_main_content_tabs %}
-                            {% endblock %}
+
+                            {% snippet 'selfinfo/snippets/additional_content_tabs.html', profile=profile, data=data, full_url=full_url %}
                         </div>
                     </div>
                     {% endfor %}

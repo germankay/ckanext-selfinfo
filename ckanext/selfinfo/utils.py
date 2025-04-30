@@ -364,13 +364,12 @@ def get_ckan_queues():
         jobs_counts = queue.count
         data[queue.name] = {
             "count": jobs_counts,
-            "jobs": [
-                jobs.dictize_job(job) for job in queue.get_jobs(0, 100)
-            ],
-            "above_the_limit": True if jobs_counts > 100 else False
+            "jobs": [jobs.dictize_job(job) for job in queue.get_jobs(0, 100)],
+            "above_the_limit": True if jobs_counts > 100 else False,
         }
 
     return data
+
 
 def retrieve_additionals_redis_keys_info(key):
     redis: Redis = connect_to_redis()
@@ -385,6 +384,7 @@ def retrieve_additionals_redis_keys_info(key):
 
     return data
 
+
 def retrieve_additional_selfinfo_by_keys(key):
     redis: Redis = connect_to_redis()
     try:
@@ -396,16 +396,25 @@ def retrieve_additional_selfinfo_by_keys(key):
         data = {}
         log.error(f"Cannot retrieve data using '{key}' from Redis.")
 
+    if self_config.selfinfo_get_dulicated_envs_mode():
+        keys = selfinfo_internal_ip_keys()
+        shared_categories = self_config.selfinfo_get_dulicated_envs_shared_categories()
+        glob_categories = self_config.CATEGORIES
+        if shared_categories and key in keys:
+            for category in shared_categories:
+                if category in glob_categories and not category in data:
+                    data[category] = glob_categories[category]()
+
     return data
 
 
 def selfinfo_retrieve_iternal_ip():
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(('8.8.8.8', 80))
+        s.connect(("8.8.8.8", 80))
         ip = s.getsockname()[0]
     except Exception:
-        ip = '127.0.0.1'
+        ip = "127.0.0.1"
     finally:
         s.close()
 
@@ -414,4 +423,6 @@ def selfinfo_retrieve_iternal_ip():
 
 def selfinfo_internal_ip_keys():
     redis: Redis = connect_to_redis()
-    return [i.decode("utf-8") for i in redis.scan_iter(match="selfinfo_duplicated_env_*")]
+    return [
+        i.decode("utf-8") for i in redis.scan_iter(match="selfinfo_duplicated_env_*")
+    ]

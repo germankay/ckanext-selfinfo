@@ -97,16 +97,16 @@ def write_selfinfo_duplicated_env():
     )
     data["label"] = f"{internal_ip} Env"
     data["provided_on"] = datetime.utcnow().timestamp()
-    
+
     shared_categories = self_config.selfinfo_get_dulicated_envs_shared_categories()
 
     if shared_categories:
         for category in shared_categories:
             if category in data:
-                del(data[category])
+                del data[category]
 
     redis: Redis = connect_to_redis()
-    selfinfo_key = "selfinfo_duplicated_env_" + internal_ip.replace('.', '_')
+    selfinfo_key = "selfinfo_duplicated_env_" + internal_ip.replace(".", "_")
     redis.set(selfinfo_key, json.dumps(data))
     click.echo(f"Stored Selfinfo data under '{selfinfo_key}' key.")
 

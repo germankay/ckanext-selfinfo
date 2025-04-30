@@ -56,7 +56,12 @@ class SelfinfoView(MethodView):
         else:
             additional_keys.extend(selfinfo_internal_ip_keys())
 
-        additional_keys.extend(["selfinfo_" + key for key in self_config.selfinfo_get_additional_redis_keys()])
+        additional_keys.extend(
+            [
+                "selfinfo_" + key
+                for key in self_config.selfinfo_get_additional_redis_keys()
+            ]
+        )
 
         if additional_keys:
             for key in additional_keys:

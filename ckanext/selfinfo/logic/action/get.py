@@ -22,29 +22,15 @@ def get_selfinfo(
 
     limited_categories = self_config.selfinfo_get_categories()
 
-    data = {
-        "python_modules": selfutils.get_python_modules_info,
-        "platform_info": selfutils.get_platform_info,
-        "ram_usage": selfutils.get_ram_usage,
-        "disk_usage": selfutils.get_disk_usage,
-        "git_info": selfutils.gather_git_info,
-        "freeze": selfutils.get_freeze,
-        "errors": selfutils.retrieve_errors,
-        "actions": selfutils.ckan_actions,
-        "auth_actions": selfutils.ckan_auth_actions,
-        "blueprints": selfutils.ckan_bluprints,
-        "helpers": selfutils.ckan_helpers,
-        "status_show": selfutils.get_status_show,
-        "ckan_queues": selfutils.get_ckan_queues
-    }
-    
+    data = self_config.CATEGORIES
+
     if categories := data_dict.get("categories"):
-        data = {
-            key: data[key] for key in data if not categories or key in categories
-        }
+        data = {key: data[key] for key in data if not categories or key in categories}
 
     data = {
-        key: func() for key, func in data.items() if not limited_categories or key in limited_categories
+        key: func()
+        for key, func in data.items()
+        if not limited_categories or key in limited_categories
     }
 
     # data modification

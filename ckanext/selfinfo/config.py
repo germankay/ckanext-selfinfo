@@ -3,6 +3,24 @@ from __future__ import annotations
 from typing import Literal
 
 import ckan.plugins.toolkit as tk
+import ckanext.selfinfo.utils as selfutils
+
+
+CATEGORIES = {
+    "python_modules": selfutils.get_python_modules_info,
+    "platform_info": selfutils.get_platform_info,
+    "ram_usage": selfutils.get_ram_usage,
+    "disk_usage": selfutils.get_disk_usage,
+    "git_info": selfutils.gather_git_info,
+    "freeze": selfutils.get_freeze,
+    "errors": selfutils.retrieve_errors,
+    "actions": selfutils.ckan_actions,
+    "auth_actions": selfutils.ckan_auth_actions,
+    "blueprints": selfutils.ckan_bluprints,
+    "helpers": selfutils.ckan_helpers,
+    "status_show": selfutils.get_status_show,
+    "ckan_queues": selfutils.get_ckan_queues,
+}
 
 SELLFINFO_SET_URL = "ckan.selfinfo.page_url"
 SELLFINFO_DEFAULT_URL = "/ckan-admin/selfinfo"
@@ -13,7 +31,9 @@ SELFINFO_REPOS_PATH = "ckan.selfinfo.ckan_repos_path"
 SELFINFO_REPOS = "ckan.selfinfo.ckan_repos"
 SELFINFO_PARTITIONS_PATH = "ckan.selfinfo.partitions"
 SELFINFO_DUPLICATED_ENVS_MODE = "ckan.selfinfo.duplicated_envs.mode"
-SELFINFO_DUPLICATED_ENVS_SHARED_CATEGORIES = "ckan.selfinfo.duplicated_envs.shared_categories"
+SELFINFO_DUPLICATED_ENVS_SHARED_CATEGORIES = (
+    "ckan.selfinfo.duplicated_envs.shared_categories"
+)
 SELFINFO_REDIS_SUFFIX: Literal["_selfinfo"] = "_selfinfo"
 SELFINFO_CATEGORIES_LIST = "ckan.selfinfo.categories_list"
 SELFINFO_ADDITIONAL_PROFILES_USING_REDIS_KEYS = (
@@ -29,9 +49,7 @@ def selfinfo_get_path():
 
 
 def selfinfo_get_main_action_name():
-    return tk.config.get(
-        SELLFINFO_SET_MAIN_ACTION_NAME
-    )
+    return tk.config.get(SELLFINFO_SET_MAIN_ACTION_NAME)
 
 
 def selfinfo_get_redis_prefix():

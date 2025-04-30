@@ -23,7 +23,12 @@ nav:
   - Profiles:
     - Overview: profiles/overview.md
     - Cron Based:
-      - Selinfo from Redis key: profiles/redis_key.md
+      - Selfinfo custom Redis key: profiles/redis_key.md
+      - Selfinfo internal IP Redis key (experimental):
+        - Overview:  profiles/duplicated_env.md
+        - Shared Categories: profiles/shared_categories
+  - Extending Selfinfo: extending/overview.md
+
 
 markdown_extensions:
   - pymdownx.highlight:
