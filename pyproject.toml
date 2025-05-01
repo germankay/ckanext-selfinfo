@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ckanext-selfinfo"
-version = "1.1.9"
+version = "1.1.10"
 description = ""
 authors = [
     {name = "DataShades", email = "datashades@linkdigital.com.au"},
