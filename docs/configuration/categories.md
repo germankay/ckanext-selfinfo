@@ -10,6 +10,7 @@ Here are the current list of categories to choose:
 
 ``` py
 ckan.selfinfo.categories_list =
+    groups
     python_modules
     platform_info
     ram_usage

@@ -51,7 +51,6 @@ To temporary patch the CKAN configuration for the duration of a test you can use
     def test_some_action():
         pass
 """
-import ckanext.selfinfo.plugin as plugin
 
 
 @pytest.mark.ckan_config("ckan.plugins", "selfinfo")

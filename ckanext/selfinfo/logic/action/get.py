@@ -7,9 +7,7 @@ from ckan import types
 import ckan.plugins.toolkit as tk
 import ckan.plugins as p
 
-import ckanext.selfinfo.utils as selfutils
-from ckanext.selfinfo.interfaces import ISelfinfo
-import ckanext.selfinfo.config as self_config
+from ckanext.selfinfo import utils, interfaces, config
 
 
 @tk.side_effect_free
@@ -20,9 +18,9 @@ def get_selfinfo(
 
     tk.check_access("sysadmin", context, data_dict)
 
-    limited_categories = self_config.selfinfo_get_categories()
+    limited_categories = config.selfinfo_get_categories()
 
-    data = selfutils.CATEGORIES
+    data = utils.CATEGORIES
 
     if categories := data_dict.get("categories"):
         data = {key: data[key] for key in data if not categories or key in categories}
@@ -34,7 +32,7 @@ def get_selfinfo(
     }
 
     # data modification
-    for item in p.PluginImplementations(ISelfinfo):
+    for item in p.PluginImplementations(interfaces.ISelfinfo):
         item.selfinfo_after_prepared(data)
 
     return data
@@ -47,4 +45,4 @@ def selfinfo_get_ram(
 
     tk.check_access("sysadmin", context, data_dict)
 
-    return selfutils.get_ram_usage()
+    return utils.get_ram_usage()

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import json
 from typing import Any
 import click
@@ -9,8 +10,9 @@ from datetime import datetime
 from ckan.lib.redis import connect_to_redis, Redis
 import ckan.plugins.toolkit as tk
 
-import ckanext.selfinfo.config as self_config
-import ckanext.selfinfo.utils as self_utils
+from ckanext.selfinfo import config, utils
+
+log = logging.getLogger(__name__)
 
 
 @click.argument("module", required=True)
@@ -26,7 +28,7 @@ def update_module_info(module: str):
 def get_selfinfo():
     # TO DO
     # Remove or re-implement
-    data = tk.get_action(self_config.selfinfo_get_main_action_name())(
+    data = tk.get_action(config.selfinfo_get_main_action_name())(
         {"ignore_auth": True}, {}
     )
 
@@ -61,6 +63,7 @@ def get_selfinfo():
         )
 
         for key, values in groups.get(item["name"], {}).items():
+            log.debug("group details %s: %s, %r", item["name"], key, values)
             name = values.get("name")
             if name:
                 item_table.add_row(
@@ -79,7 +82,7 @@ def get_selfinfo():
 @click.argument("key", required=True)
 @click.argument("label", required=False)
 def write_selfinfo(key: str, label: str):
-    data = tk.get_action(self_config.selfinfo_get_main_action_name())(
+    data = tk.get_action(config.selfinfo_get_main_action_name())(
         {"ignore_auth": True}, {}
     )
     data["label"] = label if label else key
@@ -91,14 +94,14 @@ def write_selfinfo(key: str, label: str):
 
 
 def write_selfinfo_duplicated_env():
-    internal_ip = self_utils.selfinfo_retrieve_iternal_ip()
-    data = tk.get_action(self_config.selfinfo_get_main_action_name())(
+    internal_ip = utils.selfinfo_retrieve_internal_ip()
+    data = tk.get_action(config.selfinfo_get_main_action_name())(
         {"ignore_auth": True}, {}
     )
     data["label"] = f"{internal_ip} Env"
     data["provided_on"] = datetime.utcnow().timestamp()
 
-    shared_categories = self_config.selfinfo_get_dulicated_envs_shared_categories()
+    shared_categories = config.selfinfo_get_dulicated_envs_shared_categories()
 
     if shared_categories:
         for category in shared_categories:

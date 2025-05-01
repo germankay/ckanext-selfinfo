@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 import json
-from datetime import datetime
 
 from ckan.lib.redis import connect_to_redis, Redis
 import ckan.plugins.toolkit as tk
@@ -14,10 +13,9 @@ from .utils import get_redis_key
 class SelfinfoErrorHandler(logging.Handler):
     """Custom handler to store exceptions."""
 
-    def emit(self, record):
+    def emit(self, record: logging.LogRecord):
         if record.levelno >= logging.ERROR:
             redis: Redis = connect_to_redis()
-            now: float = datetime.utcnow().timestamp()
             log_message = self.format(record)
             redis_key = get_redis_key("errors")
 

@@ -7,21 +7,43 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  actions: read
+  id-token: write
+
+
 
 jobs:
 
   flake8:
+    permissions:
+      contents: read
+      pages: read
+      id-token: none
     name: Lint (Flake8)
     uses: ./.github/workflows/flake8.yml # Call the reusable workflow
     secrets: inherit
 
   pyright:
+    permissions:
+      contents: read
+      pages: read
+      id-token: none
     name: Lint (PyRight)
     uses: ./.github/workflows/pyright.yml # Call the reusable workflow
     secrets: inherit
 
   pytest:
+    permissions:
+      contents: read
+      pages: read
+      id-token: none
     name: Test (Pytest)
     #needs: [flake8]
     uses: ./.github/workflows/pytest.yml # Call the reusable workflow
+    secrets: inherit
+
+  docs:
+    name: Documentation
+    uses: ./.github/workflows/docs.yml # Call the reusable workflow
     secrets: inherit

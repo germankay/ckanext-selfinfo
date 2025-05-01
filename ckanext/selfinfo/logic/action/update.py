@@ -8,8 +8,7 @@ from ckan import types
 from ckan.lib.redis import connect_to_redis, Redis
 import ckan.plugins.toolkit as tk
 
-import ckanext.selfinfo.utils as selfutils
-import ckanext.selfinfo.config as self_config
+from ckanext.selfinfo import utils, config
 
 
 def update_last_module_check(
@@ -23,14 +22,14 @@ def update_last_module_check(
     if module:
         redis: Redis = connect_to_redis()
 
-        redis_key: str = module + self_config.SELFINFO_REDIS_SUFFIX
+        redis_key: str = module + config.SELFINFO_REDIS_SUFFIX
         now: float = datetime.utcnow().timestamp()
 
         data: Mapping[str, Any] = {
             "name": module,
             "current_version": imetadata.version(module),
             "updated": now,
-            "latest_version": selfutils.get_lib_latest_version(module),
+            "latest_version": utils.get_lib_latest_version(module),
         }
 
         for key in data:

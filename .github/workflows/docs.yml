@@ -1,0 +1,85 @@
+name: Docs
+on:
+#  pull_request:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      push_pages:
+        description: 'Deploy to GitHub Pages'
+        required: false
+        default: 'false'
+
+env:
+  PYTHON_VERSION: '3.9'
+
+permissions:
+  contents: read
+  pages: write
+  actions: read
+  id-token: write
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history, including tags
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install python deps
+        run: |
+         pip install -U pip
+         pip install ".[docs]"
+         pip check
+
+      - name: Create Docs
+        run: |
+           #mkdocs new docs #to make docs skeleton
+           mkdocs build
+
+      #as pytest runs test_building_the_docs, we might as well have an output
+      - name: Store docs
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-${{ github.sha }}
+          path: ./site
+
+  docs-deploy:
+    needs: docs
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    if: |
+      (github.ref == 'refs/heads/develop' 
+        || github.ref == 'refs/heads/master' 
+        || (github.event_name == 'workflow_dispatch' && github.event.inputs.push_pages == 'true') 
+      )
+    steps:
+      - name: Download docs
+        uses: actions/download-artifact@v4
+        with:
+          pattern: docs-*
+          path: .
+
+      - name: check files
+        run: |
+          set -ex
+          ls -ltr 
+          ls -ltr *
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "./docs-${{ github.sha }}"
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4.0.5

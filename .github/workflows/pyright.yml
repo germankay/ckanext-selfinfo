@@ -48,7 +48,7 @@ jobs:
         run: | 
           pip list
           pip install -r ckan/requirements.txt -r ckan/dev-requirements.txt ckan/.
-          pip install -r dev-requirements.txt -e. 
+          pip install -e".[test] 
 
       - name: Install node deps
         continue-on-error: ${{ matrix.experimental }}
