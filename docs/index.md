@@ -43,7 +43,7 @@ On CKAN admin page `/ckan-admin/selfinfo`, admin can see such information as:
 * **CKAN Queues**
     - Show queues and their active jobs.
 * **Solr Schema** (Optional, see [Enable Solr Schema](configuration/solr_schema.md))
-    - Shows latest exceptions.
+    - Shows CKAN Solr Schema.
 * **Errors** (Optional, see [Enable Error Saving](configuration/errors.md))
     - Shows latest exceptions.
 
