@@ -1,6 +1,6 @@
 ## Enable GIT Info
 
-![Enabled GIT Info](assets/git.png)
+![Enabled GIT Info](../assets/git.png)
 
 In order to enable GIT Info you need to add the `ckan.selfinfo.ckan_repos_path`, which is the path to your folder, where all extensions stored.
 

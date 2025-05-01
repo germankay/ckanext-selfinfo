@@ -29,7 +29,7 @@ On CKAN admin page `/ckan-admin/selfinfo`, admin can see such information as:
     - Auth
     - Helpers
     - Blueprints
-* **GIT Information** (Optional, see [Config Settings section](git_info.md))
+* **GIT Information** (Optional, see [Config Settings section](configuration/git_info.md))
     - Project
     - Head
     - Based on
@@ -40,10 +40,12 @@ On CKAN admin page `/ckan-admin/selfinfo`, admin can see such information as:
     - List of modules that are installed.
 * **Python Information**
     - Provides information about CKAN Core, CKAN Extensions, Python installed packages. It shows their current version and latest version.
-* **Errors** (Optional, see [Enable Error Saving](errors.md))
-    - Shows latest exceptions.
 * **CKAN Queues**
     - Show queues and their active jobs.
+* **Solr Schema** (Optional, see [Enable Solr Schema](configuration/solr_schema.md))
+    - Shows latest exceptions.
+* **Errors** (Optional, see [Enable Error Saving](configuration/errors.md))
+    - Shows latest exceptions.
 
 
-Recommened to firstly visit [Secure URL and Action](secure_url_and_action.md) and [Unique Redis key](unique_redis_key_per_portal_instance.md) after the installation done.
+Recommened to firstly visit [Secure URL and Action](configuration/secure_url_and_action.md) and [Unique Redis key](configuration/unique_redis_key_per_portal_instance.md) after the installation done.

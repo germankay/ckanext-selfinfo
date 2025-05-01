@@ -48,16 +48,19 @@
                                     <a href="#nav-git-{{ profile }}" class="nav-link" id="nav-git-{{ profile }}-tab" data-bs-toggle="tab" data-bs-target="#nav-git-{{ profile }}" role="tab" aria-controls="nav-git-{{ profile }}" aria-selected="false">GIT Info</a>
                                 {% endif %}
                                 {% if data.python_modules %}
-                                <a href="#nav-python-{{ profile }}" class="nav-link" id="nav-python-{{ profile }}-tab" data-bs-toggle="tab" data-bs-target="#nav-python-{{ profile }}" role="tab" aria-controls="nav-python-{{ profile }}" aria-selected="false">Python Info</a>
+                                    <a href="#nav-python-{{ profile }}" class="nav-link" id="nav-python-{{ profile }}-tab" data-bs-toggle="tab" data-bs-target="#nav-python-{{ profile }}" role="tab" aria-controls="nav-python-{{ profile }}" aria-selected="false">Python Info</a>
                                 {% endif %}
                                 {% if data.freeze %}
-                                <a href="#nav-freeze-{{ profile }}" class="nav-link" id="nav-freeze-{{ profile }}-tab" data-bs-toggle="tab" data-bs-target="#nav-freeze-{{ profile }}" role="tab" aria-controls="nav-freeze-{{ profile }}" aria-selected="false">PIP Freeze</a>
+                                    <a href="#nav-freeze-{{ profile }}" class="nav-link" id="nav-freeze-{{ profile }}-tab" data-bs-toggle="tab" data-bs-target="#nav-freeze-{{ profile }}" role="tab" aria-controls="nav-freeze-{{ profile }}" aria-selected="false">PIP Freeze</a>
                                 {% endif %}
                                 {% if data.ckan_queues %}
-                                <a href="#nav-ckan_queues-{{ profile }}" class="nav-link" id="nav-ckan_queues-{{ profile }}-tab" data-bs-toggle="tab" data-bs-target="#nav-ckan_queues-{{ profile }}" role="tab" aria-controls="nav-ckan_queues-{{ profile }}" aria-selected="false">CKAN Queues</a>
+                                    <a href="#nav-ckan_queues-{{ profile }}" class="nav-link" id="nav-ckan_queues-{{ profile }}-tab" data-bs-toggle="tab" data-bs-target="#nav-ckan_queues-{{ profile }}" role="tab" aria-controls="nav-ckan_queues-{{ profile }}" aria-selected="false">CKAN Queues</a>
+                                {% endif %}
+                                {% if data.ckan_solr_schema %}
+                                    <a href="#nav-ckan_solr_schema-{{ profile }}" class="nav-link" id="nav-ckan_solr_schema-{{ profile }}-tab" data-bs-toggle="tab" data-bs-target="#nav-ckan_solr_schema-{{ profile }}" role="tab" aria-controls="nav-ckan_solr_schema-{{ profile }}" aria-selected="false">Solr Schema</a>
                                 {% endif %}
                                 {% if 'errors' in data %}
-                                <a href="#nav-errors-{{ profile }}" class="nav-link" id="nav-errors-{{ profile }}-tab" data-bs-toggle="tab" data-bs-target="#nav-errors-{{ profile }}" role="tab" aria-controls="nav-errors-{{ profile }}" aria-selected="false">Errors</a>
+                                    <a href="#nav-errors-{{ profile }}" class="nav-link" id="nav-errors-{{ profile }}-tab" data-bs-toggle="tab" data-bs-target="#nav-errors-{{ profile }}" role="tab" aria-controls="nav-errors-{{ profile }}" aria-selected="false">Errors</a>
                                 {% endif %}
 
                                 {% snippet 'selfinfo/snippets/additional_navigation_tabs.html', profile=profile, data=data, full_url=full_url %}
@@ -88,6 +91,11 @@
                             {% if data.ckan_queues %}
                             <div class="tab-pane fade mt-3" id="nav-ckan_queues-{{ profile }}" role="tabpanel" aria-labelledby="nav-ckan_queues-tab">
                                 {% snippet 'selfinfo/snippets/ckan_queues.html', profile=profile, data=data, full_url=full_url, id='nav-ckan_queues-' ~ profile %}
+                            </div>
+                            {% endif %}
+                            {% if data.ckan_solr_schema %}
+                            <div class="tab-pane fade mt-3" id="nav-ckan_solr_schema-{{ profile }}" role="tabpanel" aria-labelledby="nav-ckan_solr_schema-tab">
+                                {% snippet 'selfinfo/snippets/self_ckan_solr_schema.html', profile=profile, data=data, full_url=full_url, id='nav-ckan_solr_schema-' ~ profile %}
                             </div>
                             {% endif %}
                             {% if 'errors' in data %}

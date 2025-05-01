@@ -19,6 +19,8 @@ For Linux, keep in mind that the added folder in `ckan.selfinfo.ckan_repos_path`
 
 Errors for GIT now being stored below the original Table on GIT Info tab.
 
+**`ckan.selfinfo.solr_schema_filenamet`** - (Optional) Used to specify the filename that Solr uses for CKAN schema. Mentioned in [Enable Solr Schema](configuration/solr_schema.md).
+
 **`ckan.selfinfo.additional_profiles_using_redis_keys`** - Retrieves selfinfo data on page from external sources that store selfinfo data using `write-selfinfo` cli command under unique Redis key. The stored data should be under same Redis connection as per the "default" profile.
 
 Example: `unique_redis_key_1 unique_redis_key_2`

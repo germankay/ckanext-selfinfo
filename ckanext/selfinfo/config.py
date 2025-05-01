@@ -20,6 +20,7 @@ CATEGORIES = {
     "helpers": selfutils.ckan_helpers,
     "status_show": selfutils.get_status_show,
     "ckan_queues": selfutils.get_ckan_queues,
+    "ckan_solr_schema": selfutils.get_solr_schema,
 }
 
 SELLFINFO_SET_URL = "ckan.selfinfo.page_url"
@@ -39,6 +40,7 @@ SELFINFO_CATEGORIES_LIST = "ckan.selfinfo.categories_list"
 SELFINFO_ADDITIONAL_PROFILES_USING_REDIS_KEYS = (
     "ckan.selfinfo.additional_profiles_using_redis_keys"
 )
+SELFINFO_SOLR_SCHEMA_FILENAME = "ckan.selfinfo.solr_schema_filename"
 STORE_TIME: float = 604800.0  # one week
 # STORE_TIME: float = 1.0
 PYPI_URL: Literal["https://pypi.org/pypi/"] = "https://pypi.org/pypi/"
@@ -87,3 +89,7 @@ def selfinfo_get_dulicated_envs_mode():
 
 def selfinfo_get_dulicated_envs_shared_categories():
     return tk.config.get(SELFINFO_DUPLICATED_ENVS_SHARED_CATEGORIES)
+
+
+def selfinfo_get_solr_schema_filename():
+    return tk.config.get(SELFINFO_SOLR_SCHEMA_FILENAME)

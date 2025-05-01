@@ -4,7 +4,7 @@ Out of the box, Selfinfo will try to load all the possible information that curr
 
 This is really needed, when you have an instance that doesn't use UI, like CKAN Jobs worker, so for example the Blueprints are not needed, as CKAN won't provide them or Python Modules, which can be spacing consuming for big projects.
 
-See [Config Settings](config_settings.md) for an example of this CKAN Config.
+See [Config Settings](../config_settings.md) for an example of this CKAN Config.
 
 Here are the current list of categories to choose:
 
@@ -23,4 +23,5 @@ ckan.selfinfo.categories_list =
     helpers
     status_show
     ckan_queues
+    ckan_solr_schema
 ```

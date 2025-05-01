@@ -14,11 +14,12 @@ nav:
   - Installation: installation.md
   - Config Settings: config_settings.md
   - Configuration:
-    - Secure URL and Action: secure_url_and_action.md
-    - Unique Redis key: unique_redis_key_per_portal_instance.md
-    - Enable Errors: errors.md
-    - GIT Info: git_info.md
-    - Categories: categories.md
+    - Secure URL and Action: configuration/secure_url_and_action.md
+    - Unique Redis key: configuration/unique_redis_key_per_portal_instance.md
+    - Enable Errors: configuration/errors.md
+    - GIT Info: configuration/git_info.md
+    - Solr Schema: configuration/solr_schema.md
+    - Categories: configuration/categories.md
   - CLI: cli.md
   - Profiles:
     - Overview: profiles/overview.md

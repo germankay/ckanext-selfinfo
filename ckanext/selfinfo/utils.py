@@ -20,6 +20,10 @@ import socket
 from ckan.lib.redis import connect_to_redis, Redis
 import ckan.plugins.toolkit as tk
 from ckan.lib import jobs
+from ckan.lib.search.common import (
+    is_available as solr_available,
+    make_connection as solr_connection,
+)
 
 import ckanext.selfinfo.config as self_config
 
@@ -367,6 +371,30 @@ def get_ckan_queues():
             "jobs": [jobs.dictize_job(job) for job in queue.get_jobs(0, 100)],
             "above_the_limit": True if jobs_counts > 100 else False,
         }
+
+    return data
+
+
+def get_solr_schema():
+    data = {}
+    schema_filename = self_config.selfinfo_get_solr_schema_filename()
+
+    if solr_available() and schema_filename:
+        try:
+            solr = solr_connection()
+            solr_url = solr.url
+
+            schema_url = f"{solr_url.rstrip('/')}/admin/file"
+            params = {
+                "file": schema_filename,
+                "contentType": "application/xml;charset=utf-8",
+            }
+            schema_response = requests.get(schema_url, params=params)
+            schema_response.raise_for_status()
+
+            data["schema"] = schema_response.text
+        except requests.exceptions.HTTPError as e:
+            log.error("Solr Schema: Please re-check the filename you provided. %s", e)
 
     return data
 

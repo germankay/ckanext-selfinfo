@@ -6,4 +6,4 @@ To avoid this, you can add an unique Redis prefix key, that will allow you to se
 
 Example: adding `random_key` will store the data under `random_key_errors_selinfo`.
 
-![Selfinfo unique Redis prefix](assets/redis_unique_prefix.png)
+![Selfinfo unique Redis prefix](../assets/redis_unique_prefix.png)
