@@ -1,4 +1,4 @@
-name: Tests
+name: Tests CKAN 2.11
 on: [push, pull_request]
 
 jobs:
@@ -34,7 +34,7 @@ jobs:
 
     - name: Install requirements
       run: |
-        pip install -r requirements.txt
+        cd ckanext-selfinfo
         pip install -r dev-requirements.txt
         pip install -e .
 
