@@ -36,12 +36,15 @@ def update_last_module_check(
             if data[key] != redis.hget(redis_key, key):
                 redis.hset(redis_key, key=key, value=data[key])
 
+        raw_result = redis.hgetall(redis_key)
         result: dict[str, Any] = {
             k.decode("utf-8"): v.decode("utf-8")
-            for k, v in redis.hgetall(redis_key).items()
+            for k, v in raw_result.items()  # type: ignore
         }
 
-        result["updated"] = datetime.fromtimestamp(float(result["updated"]))
+        # Convert the updated timestamp to a human-readable format
+        result["updated"] = str(
+            datetime.fromtimestamp(float(result["updated"])))
 
         return result
     return {}

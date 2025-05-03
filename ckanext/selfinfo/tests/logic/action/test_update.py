@@ -1,5 +1,6 @@
 from __future__ import annotations
-
+import logging
+from datetime import datetime
 from typing import Any
 import pytest
 import os
@@ -10,6 +11,8 @@ from ckan.tests.helpers import call_action
 from ckan.tests import factories
 
 from ckanext.selfinfo import config
+
+log = logging.getLogger(__name__)
 
 current_path: list[str] = os.getcwd().split("/")
 current_path.pop()
@@ -37,14 +40,21 @@ class TestUPDATE:
         selfinfo: dict[str, Any] = tk.get_action(
             config.selfinfo_get_main_action_name()
         )(context, {})
+        assert "python_modules" in selfinfo, selfinfo.keys()
+        assert "ckan" in selfinfo["python_modules"], selfinfo['python_modules'].keys()
+        assert "ckan" in selfinfo["python_modules"]["ckan"], selfinfo['python_modules']['ckan'].keys()
 
-        assert "groups" in selfinfo, selfinfo.keys()
-
-        ckan_info = selfinfo["groups"]["ckan"]["ckan"]
+        ckan_info = selfinfo["python_modules"]["ckan"]["ckan"]
 
         updated: dict[str, Any] = tk.get_action("update_last_module_check")(
             context, {"module": "ckan"}
         )
 
         assert ckan_info != updated
-        assert ckan_info["updated"] < updated["updated"]
+        before_updated = datetime.fromisoformat(ckan_info["updated"])
+        after_updated = datetime.fromisoformat(updated["updated"])
+        assert before_updated < after_updated
+        # pop update field, see that they are the same
+        ckan_info.pop("updated", None)
+        updated.pop("updated", None)
+        assert ckan_info == updated

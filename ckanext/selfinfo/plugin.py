@@ -1,5 +1,6 @@
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as tk
+from ckan.common import CKANConfig
 
 from .logic import action
 from . import cli
@@ -14,7 +15,7 @@ class SelfinfoPlugin(plugins.SingletonPlugin):
 
     # IConfigurer
 
-    def update_config(self, config_):
+    def update_config(self, config_: CKANConfig):
         tk.add_template_directory(config_, "templates")
         tk.add_public_directory(config_, "public")
         tk.add_resource("assets", "selfinfo")

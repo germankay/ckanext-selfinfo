@@ -1,8 +1,10 @@
 from __future__ import annotations
-
+import logging
 from typing import Any
 
 from ckanext.selfinfo import utils as utils
+
+log = logging.getLogger(__name__)
 
 
 class TestUTILS:
@@ -11,7 +13,11 @@ class TestUTILS:
 
         assert isinstance(python_moduls_info, dict)
 
+        log.debug("python_moduls_info: %s", python_moduls_info)
         assert len(python_moduls_info.keys()) == 3, python_moduls_info.keys()
+        assert "ckan" in python_moduls_info.keys()
+        assert "ckanext" in python_moduls_info.keys()
+        assert "other" in python_moduls_info.keys()
 
     def test_get_lib_data(self):
         lib_data: dict[str, Any] | None = utils.get_lib_data("ckan")
