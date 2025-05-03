@@ -21,6 +21,7 @@ ckan.selfinfo.categories_list =
     auth_actions
     blueprints
     helpers
+    ckan_cli_commands
     status_show
     ckan_queues
     ckan_solr_schema

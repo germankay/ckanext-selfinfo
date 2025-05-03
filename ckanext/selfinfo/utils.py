@@ -16,6 +16,7 @@ import inspect
 import functools
 import types
 import socket
+import click
 
 from ckan.lib.redis import connect_to_redis, Redis
 import ckan.plugins.toolkit as tk
@@ -24,6 +25,7 @@ from ckan.lib.search.common import (
     is_available as solr_available,
     make_connection as solr_connection,
 )
+from ckan.cli.cli import ckan as ckan_commands
 
 import ckanext.selfinfo.config as self_config
 
@@ -355,6 +357,52 @@ def ckan_helpers():
                 "chained": chained,
             }
         )
+    return data
+
+
+def get_ckan_registered_cli():
+    data = []
+    if ckan_commands and ckan_commands.commands:
+
+        def _get_command_info(cmd):
+            info = {
+                "name": cmd.name,
+                "help": cmd.help or "",
+                "arguments": [],
+                "options": [],
+            }
+
+            for param in cmd.params:
+                param_info = {
+                    "name": param.name,
+                    "type": str(param.type),
+                    "required": param.required,
+                    "help": getattr(param, "help", ""),
+                    "opts": getattr(param, "opts", []),
+                }
+                if isinstance(param, click.Argument):
+                    info["arguments"].append(param_info)
+                elif isinstance(param, click.Option):
+                    info["options"].append(param_info)
+
+            return info
+
+        def _build_command_tree(group):
+            command_tree = []
+
+            for _, cmd in group.commands.items():
+                cmd_info = _get_command_info(cmd)
+
+                if isinstance(cmd, click.Group):
+                    # recursively gather subcommands
+                    cmd_info["subcommands"] = _build_command_tree(cmd)
+
+                command_tree.append(cmd_info)
+
+            return command_tree
+
+        data = _build_command_tree(ckan_commands)
+
     return data
 
 

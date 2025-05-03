@@ -29,6 +29,7 @@ On CKAN admin page `/ckan-admin/selfinfo`, admin can see such information as:
     - Auth
     - Helpers
     - Blueprints
+    - CLI Commands
 * **GIT Information** (Optional, see [Config Settings section](configuration/git_info.md))
     - Project
     - Head

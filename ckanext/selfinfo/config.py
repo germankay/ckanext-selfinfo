@@ -21,6 +21,7 @@ CATEGORIES = {
     "status_show": selfutils.get_status_show,
     "ckan_queues": selfutils.get_ckan_queues,
     "ckan_solr_schema": selfutils.get_solr_schema,
+    "ckan_cli_commands": selfutils.get_ckan_registered_cli,
 }
 
 SELLFINFO_SET_URL = "ckan.selfinfo.page_url"
