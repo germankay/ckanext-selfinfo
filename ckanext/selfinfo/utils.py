@@ -7,6 +7,7 @@ import psutil
 from psutil._common import bytes2human
 import platform
 import git
+from git.exc import InvalidGitRepositoryError
 from datetime import datetime
 import importlib_metadata as imetadata
 import logging
@@ -255,7 +256,7 @@ def get_git_repo(path: str) -> Optional[git.Repo]:
     repo = None
     try:
         repo = git.Repo(path)
-    except Exception:
+    except InvalidGitRepositoryError:
         log.debug("Git Collection failed", exc_info=True)
         pass
 
@@ -373,11 +374,11 @@ def ckan_helpers() -> list[dict[str, Any]]:
     return data
 
 
-def get_ckan_registered_cli():
+def get_ckan_registered_cli() -> list[Any]:
     data = []
     if ckan_commands and ckan_commands.commands:
 
-        def _get_command_info(cmd):
+        def _get_command_info(cmd: click.Group | click.Command) -> dict[str, Any]:
             info = {
                 "name": cmd.name,
                 "help": cmd.help or "",
@@ -400,11 +401,11 @@ def get_ckan_registered_cli():
 
             return info
 
-        def _build_command_tree(group):
+        def _build_command_tree(group: click.Group) -> list[Any]:
             command_tree = []
 
             for _, cmd in group.commands.items():
-                cmd_info = _get_command_info(cmd)
+                cmd_info: dict[str, Any] = _get_command_info(cmd)
 
                 if isinstance(cmd, click.Group):
                     # recursively gather subcommands
