@@ -1,6 +1,8 @@
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as tk
 
+from .blueprints.selfinfo import selfinfo_bp
+
 from .logic import action
 from . import cli
 
@@ -18,3 +20,6 @@ class SelfinfoPlugin(plugins.SingletonPlugin):
         tk.add_template_directory(config_, "templates")
         tk.add_public_directory(config_, "public")
         tk.add_resource("assets", "selfinfo")
+
+        # Registra el Blueprint
+        config_['ckan.blueprints'] = config_.get('ckan.blueprints', []) + [selfinfo_bp]
