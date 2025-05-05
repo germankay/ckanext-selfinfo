@@ -1,21 +1,16 @@
 from __future__ import annotations
 
-import time
+
 import json
 from typing import Any, cast
-from flask import Blueprint, Response
+from flask import Blueprint
 from flask.views import MethodView
 
 from ckan import types
 import ckan.model as model
 import ckan.plugins.toolkit as tk
 from ckan.lib.redis import connect_to_redis, Redis
-from ckanext.selfinfo.utils import (
-    get_redis_key,
-    retrieve_additional_selfinfo_by_keys,
-    selfinfo_internal_ip_keys,
-)
-import ckanext.selfinfo.config as self_config
+from ckanext.selfinfo import config, utils
 
 selfinfo = Blueprint("selfinfo", __name__)
 
@@ -40,32 +35,32 @@ class SelfinfoView(MethodView):
 
         if args.get("drop_errors") and tk.asbool(args["drop_errors"]):
             redis: Redis = connect_to_redis()
-            key = get_redis_key("errors")
+            key = utils.get_redis_key("errors")
             redis.set(key, json.dumps([]))
 
             return tk.redirect_to("selfinfo.index")
         additional_keys = []
         profiles = {}
 
-        if not self_config.selfinfo_get_dulicated_envs_mode():
+        if not config.selfinfo_get_dulicated_envs_mode():
             data: dict[str, Any] = tk.get_action(
-                self_config.selfinfo_get_main_action_name()
+                config.selfinfo_get_main_action_name()
             )({}, {})
 
             profiles["default"] = data
         else:
-            additional_keys.extend(selfinfo_internal_ip_keys())
+            additional_keys.extend(utils.selfinfo_internal_ip_keys())
 
         additional_keys.extend(
             [
                 "selfinfo_" + key
-                for key in self_config.selfinfo_get_additional_redis_keys()
+                for key in config.selfinfo_get_additional_redis_keys()
             ]
         )
 
         if additional_keys:
             for key in additional_keys:
-                profiles[key] = retrieve_additional_selfinfo_by_keys(key)
+                profiles[key] = utils.retrieve_additional_selfinfo_by_keys(key)
 
         return tk.render(
             "selfinfo/index.html",
@@ -120,6 +115,6 @@ def selfinfo_get_ram():
 
 
 selfinfo.add_url_rule(
-    self_config.selfinfo_get_path(),
+    config.selfinfo_get_path(),
     view_func=SelfinfoView.as_view("index"),
 )

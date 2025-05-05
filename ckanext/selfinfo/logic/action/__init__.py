@@ -4,12 +4,12 @@ from typing import Any
 
 from . import get
 from . import update
-import ckanext.selfinfo.config as self_config
+from ckanext.selfinfo import config
 
 
 def get_actions():
     actions: dict[str, Any] = {
-        self_config.selfinfo_get_main_action_name(): get.get_selfinfo,
+        config.selfinfo_get_main_action_name(): get.get_selfinfo,
         "update_last_module_check": update.update_last_module_check,
         "selfinfo_get_ram": get.selfinfo_get_ram,
     }

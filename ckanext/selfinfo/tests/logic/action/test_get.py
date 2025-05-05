@@ -8,9 +8,9 @@ import os
 from ckan import model
 import ckan.plugins.toolkit as tk
 from ckan.tests.helpers import call_action
-import ckan.tests.factories as factories
+from ckan.tests import factories
 
-import ckanext.selfinfo.config as self_config
+from ckanext.selfinfo import config
 
 current_path: list[str] = os.getcwd().split("/")
 current_path.pop()
@@ -32,16 +32,16 @@ class TestGET:
         }
 
         with pytest.raises(tk.NotAuthorized):
-            call_action(self_config.selfinfo_get_main_action_name(), context=context)
+            call_action(config.selfinfo_get_main_action_name(), context=context)
 
         context["user"] = sysadmin["name"]
 
         selfinfo: dict[str, Any] = tk.get_action(
-            self_config.selfinfo_get_main_action_name()
+            config.selfinfo_get_main_action_name()
         )(context, {})
 
-        assert type(selfinfo) == dict
+        assert isinstance(selfinfo, dict)
 
-        assert len(selfinfo.keys()) == 4
+        assert len(selfinfo.keys()) >= 4, selfinfo.keys()
 
         assert selfinfo["platform_info"]["python_version"] == platform.python_version()

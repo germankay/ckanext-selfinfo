@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import Any, Mapping
+from typing import Any, Mapping, Optional, MutableMapping
 import requests
 import psutil
 from psutil._common import bytes2human
@@ -27,20 +27,20 @@ from ckan.lib.search.common import (
 )
 from ckan.cli.cli import ckan as ckan_commands
 
-import ckanext.selfinfo.config as self_config
+from . import config, utils
 
 
 log = logging.getLogger(__name__)
 
 
-def get_redis_key(name):
+def get_redis_key(name: str) -> str:
     """
     Generate a Redis key by combining a prefix, the provided name, and a suffix.
     """
     return (
-        self_config.selfinfo_get_redis_prefix()
+        config.selfinfo_get_redis_prefix()
         + name
-        + self_config.SELFINFO_REDIS_SUFFIX
+        + config.SELFINFO_REDIS_SUFFIX
     )
 
 
@@ -56,45 +56,52 @@ def get_python_modules_info(force_reset: bool = False) -> dict[str, Any]:
         for module in p:
             group: str = i if i in groups else "other"
 
-            if module in module and not module in groups[group]:
-                redis_key: str = get_redis_key(module)
-                data: Mapping[str, Any] = {
+            if module not in groups[group]:
+                redis_module_key: str = get_redis_key(module)
+                data: MutableMapping[str, Any] = {
                     "name": module,
                     "current_version": modules.get(module, "unknown"),
                     "updated": now,
                 }
-                if not redis.hgetall(redis_key):
+                if not redis.hgetall(redis_module_key):
                     data["latest_version"] = get_lib_latest_version(module)
-                    redis.hset(redis_key, mapping=data)
+                    redis.hset(redis_module_key, mapping=dict(data))
 
-                if (
-                    now - float(redis.hget(redis_key, "updated").decode("utf-8"))
-                ) > self_config.STORE_TIME or force_reset:
+                updated_time = redis.hget(redis_module_key, "updated")
+                is_stale = True
+                if updated_time:
+                    updated_time = updated_time.decode("utf-8")  # type: ignore
+                    is_stale = ((now - float(updated_time)) > config.STORE_TIME)
+                if is_stale or force_reset:
+                    log.debug("Updating module: %s due to isStale: %s, Force: %s",
+                              module, is_stale, force_reset)
                     data["latest_version"] = get_lib_latest_version(module)
                     for key in data:
-                        if data[key] != redis.hget(redis_key, key):
-                            redis.hset(redis_key, key=key, value=data[key])
+                        if data[key] != redis.hget(redis_module_key, key):
+                            redis.hset(redis_module_key, key=key, value=data[key])
 
                 groups[group][module] = {
                     k.decode("utf-8"): v.decode("utf-8")
-                    for k, v in redis.hgetall(redis_key).items()
+                    for k, v in redis.hgetall(redis_module_key).items()  # type: ignore
                 }
 
+                # Convert the updated timestamp to a human-readable format
                 groups[group][module]["updated"] = str(
                     datetime.fromtimestamp(float(groups[group][module]["updated"]))
                 )
 
+    # Sort specific groups alphabetically by module name
     groups["ckanext"] = dict(sorted(groups["ckanext"].items()))
     groups["other"] = dict(sorted(groups["other"].items()))
 
     return groups
 
 
-def get_freeze():
+def get_freeze() -> dict[str, 'str|list[str]']:
     try:
         from pip._internal.operations import freeze
     except ImportError:  # pip < 10.0
-        from pip.operations import freeze
+        from pip.operations import freeze  # type: ignore
     pkgs = freeze.freeze()
     pkgs = list(pkgs)
     pkgs_string = "\n".join(list(pkgs))
@@ -104,9 +111,9 @@ def get_freeze():
     }
 
 
-def get_lib_data(lib):
+def get_lib_data(lib: str) -> Optional[dict[str, Any]]:
     req = requests.get(
-        self_config.PYPI_URL + lib + "/json",
+        config.PYPI_URL + lib + "/json",
         headers={"Content-Type": "application/json"},
     )
 
@@ -115,7 +122,7 @@ def get_lib_data(lib):
     return None
 
 
-def get_lib_latest_version(lib):
+def get_lib_latest_version(lib: str) -> str:
     data = get_lib_data(lib)
 
     if data and data.get("info"):
@@ -124,7 +131,7 @@ def get_lib_latest_version(lib):
 
 
 def get_ram_usage() -> dict[str, Any]:
-    psutil.process_iter.cache_clear()
+    psutil.process_iter.cache_clear()  # type: ignore cache_clear() is dynamic
     memory = psutil.virtual_memory()
     top10 = []
     processes = []
@@ -153,8 +160,8 @@ def get_ram_usage() -> dict[str, Any]:
     }
 
 
-def get_disk_usage():
-    paths = self_config.selfinfo_get_partitions()
+def get_disk_usage() -> list[dict[str, Any]]:
+    paths = config.selfinfo_get_partitions()
     results = []
 
     for path in paths:
@@ -171,7 +178,7 @@ def get_disk_usage():
                     }
                 )
         except OSError:
-            log.exception(f"Path '{path}' does not exists.")
+            log.exception("Path '%s' does not exists.", path)
     return results
 
 
@@ -183,11 +190,11 @@ def get_platform_info() -> dict[str, Any]:
     }
 
 
-def gather_git_info():
-    ckan_repos_path = self_config.selfinfo_get_repos_path()
+def gather_git_info() -> dict[str, 'dict[str, Any]|list[dict[str, Any]]']:
+    ckan_repos_path = config.selfinfo_get_repos_path()
     git_info = {"repos_info": [], "access_errors": {}}
     if ckan_repos_path:
-        ckan_repos = self_config.selfinfo_get_repos()
+        ckan_repos = config.selfinfo_get_repos()
         list_repos = (
             ckan_repos
             if ckan_repos
@@ -244,32 +251,38 @@ def gather_git_info():
     return git_info
 
 
-def get_git_repo(path):
+def get_git_repo(path: str) -> Optional[git.Repo]:
     repo = None
     try:
         repo = git.Repo(path)
-    except git.exc.InvalidGitRepositoryError as e:
+    except Exception:
+        log.debug("Git Collection failed", exc_info=True)
         pass
 
     return repo
 
 
-def retrieve_errors():
+def retrieve_errors() -> list[dict[str, Any]]:
+    """ Collection from function SelfinfoErrorHandler"""
     redis: Redis = connect_to_redis()
     key = get_redis_key("errors")
+    data = []
     if not redis.exists(key):
-        redis.set(key, json.dumps([]))
-    return json.loads(redis.get(key))
+        redis.set(key, json.dumps(data))  # init key
+    else:
+        raw = redis.get(key)
+        data = json.loads(raw.decode("utf-8"))  # type: ignore
+    return data
 
 
-def ckan_actions():
+def ckan_actions() -> list[dict[str, Any]]:
     from ckan.logic import _actions
 
     data = []
     for n, f in _actions.items():
         chained = False
         # For chained items
-        if hasattr(f, "__closure__") and len(f.__closure__):
+        if hasattr(f, "__closure__") and f.__closure__ and len(f.__closure__):
             if isinstance(f.__closure__[0].cell_contents, functools.partial):
                 chained = True
 
@@ -284,7 +297,7 @@ def ckan_actions():
     return data
 
 
-def ckan_auth_actions():
+def ckan_auth_actions() -> list[dict[str, Any]]:
     from ckan.authz import _AuthFunctions
 
     data = []
@@ -307,13 +320,13 @@ def ckan_auth_actions():
     return data
 
 
-def ckan_bluprints():
+def ckan_bluprints() -> dict[str, list[dict[str, Any]]]:
     from flask import current_app
 
     app = current_app
     data = {}
     try:
-        for name, blueprint in app.blueprints.items():
+        for name in app.blueprints.items():
             data[name] = []
             for rule in current_app.url_map.iter_rules():
                 if rule.endpoint.startswith(f"{name}."):
@@ -323,7 +336,7 @@ def ckan_bluprints():
                     data[name].append(
                         {
                             "path": rule.rule,
-                            "methods": list(rule.methods),
+                            "methods": list(rule.methods or []),
                             "route": rule.endpoint,
                             "route_func": view_func.__name__,
                         }
@@ -334,7 +347,7 @@ def ckan_bluprints():
     return data
 
 
-def ckan_helpers():
+def ckan_helpers() -> list[dict[str, Any]]:
     from ckan.lib.helpers import helper_functions
 
     data = []
@@ -410,7 +423,7 @@ def get_status_show():
     return tk.get_action("status_show")({}, {})
 
 
-def get_ckan_queues():
+def get_ckan_queues() -> dict[str, dict[str, 'str|list[dict[str, Any]]']]:
     data = {}
     for queue in jobs.get_all_queues():
         jobs_counts = queue.count
@@ -423,9 +436,9 @@ def get_ckan_queues():
     return data
 
 
-def get_solr_schema():
+def get_solr_schema() -> dict[str, str]:
     data = {}
-    schema_filename = self_config.selfinfo_get_solr_schema_filename()
+    schema_filename = config.selfinfo_get_solr_schema_filename()
 
     if solr_available() and schema_filename:
         try:
@@ -441,63 +454,68 @@ def get_solr_schema():
             schema_response.raise_for_status()
 
             data["schema"] = schema_response.text
-        except requests.exceptions.HTTPError as e:
-            log.error("Solr Schema: Please re-check the filename you provided. %s", e)
+        except requests.exceptions.HTTPError:
+            log.exception("Solr Schema: Please re-check the filename you provided.")
 
     return data
 
 
-def retrieve_additionals_redis_keys_info(key):
+def retrieve_additionals_redis_keys_info(key: str) -> dict[str, dict[str, Any]]:
     redis: Redis = connect_to_redis()
+    data = {}
     try:
         selfinfo_key = "selfinfo_" + key
-        data = json.loads(redis.get(selfinfo_key))
+        raw = redis.get(selfinfo_key)
+        if raw is not None:
+            data = json.loads(raw.decode("utf-8"))  # type: ignore is syncronous
         if data.get("provided_on"):
             data["provided_on"] = str(datetime.fromtimestamp(data["provided_on"]))
     except TypeError:
-        data = {}
-        log.error(f"Cannot retrieve data using '{key}' from Redis.")
+        log.error("Cannot retrieve data using '%s' from Redis.", key)
 
     return data
 
 
-def retrieve_additional_selfinfo_by_keys(key):
+def retrieve_additional_selfinfo_by_keys(key: str) -> dict[str, dict[str, Any]]:
     redis: Redis = connect_to_redis()
     try:
         selfinfo_key = key
-        data = json.loads(redis.get(selfinfo_key))
+        raw = redis.get(selfinfo_key)
+        if raw is not None:
+            data = json.loads(raw.decode("utf-8"))  # type: ignore
+        else:
+            data = {}
+
         if data.get("provided_on"):
             data["provided_on"] = str(datetime.fromtimestamp(data["provided_on"]))
     except TypeError:
         data = {}
-        log.error(f"Cannot retrieve data using '{key}' from Redis.")
+        log.error("Cannot retrieve data using '%s' from Redis.", key)
 
-    if self_config.selfinfo_get_dulicated_envs_mode():
+    if config.selfinfo_get_dulicated_envs_mode():
         keys = selfinfo_internal_ip_keys()
-        shared_categories = self_config.selfinfo_get_dulicated_envs_shared_categories()
-        glob_categories = CATEGORIES
+        shared_categories = config.selfinfo_get_dulicated_envs_shared_categories()
+        glob_categories = utils.CATEGORIES
         if shared_categories and key in keys:
             for category in shared_categories:
-                if category in glob_categories and not category in data:
+                if category in glob_categories and category not in data:
                     data[category] = glob_categories[category]()
 
     return data
 
 
-def selfinfo_retrieve_iternal_ip():
+def selfinfo_retrieve_internal_ip():
     try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        ip = s.getsockname()[0]
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.connect(("8.8.8.8", 80))
+            ip = s.getsockname()[0]
     except Exception:
         ip = "127.0.0.1"
-    finally:
-        s.close()
 
     return ip
 
 
-def selfinfo_internal_ip_keys():
+def selfinfo_internal_ip_keys() -> list[str]:
     redis: Redis = connect_to_redis()
     return [
         i.decode("utf-8") for i in redis.scan_iter(match="selfinfo_duplicated_env_*")
