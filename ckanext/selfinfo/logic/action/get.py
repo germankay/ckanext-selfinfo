@@ -22,7 +22,7 @@ def get_selfinfo(
 
     limited_categories = self_config.selfinfo_get_categories()
 
-    data = self_config.CATEGORIES
+    data = selfutils.CATEGORIES
 
     if categories := data_dict.get("categories"):
         data = {key: data[key] for key in data if not categories or key in categories}

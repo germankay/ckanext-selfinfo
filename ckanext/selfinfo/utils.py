@@ -475,7 +475,7 @@ def retrieve_additional_selfinfo_by_keys(key):
     if self_config.selfinfo_get_dulicated_envs_mode():
         keys = selfinfo_internal_ip_keys()
         shared_categories = self_config.selfinfo_get_dulicated_envs_shared_categories()
-        glob_categories = self_config.CATEGORIES
+        glob_categories = CATEGORIES
         if shared_categories and key in keys:
             for category in shared_categories:
                 if category in glob_categories and not category in data:
@@ -502,3 +502,22 @@ def selfinfo_internal_ip_keys():
     return [
         i.decode("utf-8") for i in redis.scan_iter(match="selfinfo_duplicated_env_*")
     ]
+
+
+CATEGORIES = {
+    "python_modules": get_python_modules_info,
+    "platform_info": get_platform_info,
+    "ram_usage": get_ram_usage,
+    "disk_usage": get_disk_usage,
+    "git_info": gather_git_info,
+    "freeze": get_freeze,
+    "errors": retrieve_errors,
+    "actions": ckan_actions,
+    "auth_actions": ckan_auth_actions,
+    "blueprints": ckan_bluprints,
+    "helpers": ckan_helpers,
+    "status_show": get_status_show,
+    "ckan_queues": get_ckan_queues,
+    "ckan_solr_schema": get_solr_schema,
+    "ckan_cli_commands": get_ckan_registered_cli,
+}
