@@ -20,7 +20,7 @@ jobs:
           POSTGRES_DB: postgres
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       redis:
-        image: redis:3
+          image: redis:3
 
     env:
       CKAN_SQLALCHEMY_URL: postgresql://ckan_default:pass@postgres/ckan_test
@@ -31,14 +31,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
     - name: Install requirements
+      # Install any extra requirements your extension has here (dev requirements, other extensions etc)
       run: |
         cd ckanext-selfinfo
+        pip install -r requirements.txt
         pip install -r dev-requirements.txt
         pip install -e .
-
     - name: Setup extension
+      # Extra initialization steps
       run: |
         # Ajusta el path del archivo de configuración
         sed -i -e 's|use = config:.*|use = config:/srv/app/src/ckan/test-core.ini|' test.ini

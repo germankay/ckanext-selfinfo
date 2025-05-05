@@ -1,5 +1,6 @@
 name: Tests CKAN 2.10
 on: [push, pull_request]
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -33,6 +34,7 @@ jobs:
     - name: Install requirements
       # Install any extra requirements your extension has here (dev requirements, other extensions etc)
       run: |
+        cd ckanext-selfinfo
         pip install -r requirements.txt
         pip install -r dev-requirements.txt
         pip install -e .
