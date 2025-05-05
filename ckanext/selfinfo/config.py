@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Literal
 
 import ckan.plugins.toolkit as tk
-import ckanext.selfinfo.utils as selfutils
 
 
 SELLFINFO_SET_URL = "ckan.selfinfo.page_url"
