@@ -66,6 +66,47 @@
                             </tbody>
                         </table>
                     </div>
+                    {% if data.ram_usage.processes %}
+                        <div class="accordion-item m-3 border">
+                            <div class="accordion-header" id="ram-top-processes">
+                            <button class="accordion-button collapsed p-2" type="button" data-bs-toggle="collapse" data-bs-target="#ram-top-processes-acc" aria-expanded="false" aria-controls="ram-top-processes-acc">
+                                <div class="d-flex">
+                                    <span class="h5 mb-0">{{ _('Top 10 Processes') }}</span>
+                                </div>
+                            </button>
+                            </div>
+                            <div id="ram-top-processes-acc" class="accordion-collapse collapse" aria-labelledby="ram-top-processes-acc-heading">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <ol start="1">
+                                                {% for process in data.ram_usage.processes[:5] %}
+                                                    <li>
+                                                        <span title="memory">{{ process[2] }}</span>,
+                                                        <span title="name">{{ process[1] }}</span>,
+                                                        <span title="PID">{{ process[0] }}</span>
+                                                    </li>
+                                                {% endfor %}
+                                            </ol>
+                                        </div>
+                                        {% if data.ram_usage.processes|length > 5 %}
+                                            <div class="col-lg-6">
+                                                <ol start="6">
+                                                    {% for process in data.ram_usage.processes[5:] %}
+                                                        <li>
+                                                            <span title="memory">{{ process[2] }}</span>,
+                                                            <span title="name">{{ process[1] }}</span>,
+                                                            <span title="PID">{{ process[0] }}</span>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ol>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                            </div>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
             {% if profile == 'default' %}
