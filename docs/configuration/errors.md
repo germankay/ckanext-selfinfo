@@ -23,3 +23,11 @@ In `logger_ckan` modify `handlers`, example:
     handlers = console, selfinfoErrorHanlder
     qualname = ckan
     propagate = 0
+
+In `logger_ckanext` modify `handlers`, example:
+
+    [logger_ckanext]
+    level = DEBUG
+    handlers = console, selfinfoErrorHanlder
+    qualname = ckanext
+    propagate = 0

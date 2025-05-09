@@ -21,14 +21,8 @@ class SelfinfoErrorHandler(logging.Handler):
 
             if not redis.exists(redis_key):
                 redis.set(redis_key, json.dumps([]))
-            raw = redis.get(redis_key)
-            if not raw:
-                errors = []
-            else:
-                errors = raw.decode("utf-8")  # type: ignore
-                if not isinstance(errors, list):  # Ensure errors is a list
-                    errors = []
 
+            errors = json.loads(redis.get(redis_key))
             errors_limit = selfinfo_get_errors_limit()
             if len(errors) >= errors_limit:
                 start_key = len(errors) - errors_limit + 1
