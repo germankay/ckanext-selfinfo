@@ -28,7 +28,11 @@ def get_selfinfo(
     # If a list of categories is passed in, use that instead.
     if data_dict.get("categories"):
         categories = data_dict.get("categories")
-        data_categories = {key: data_categories[key] for key in data_categories if not categories or key in categories}
+        data_categories = {
+            key: data_categories[key]
+            for key in data_categories
+            if not categories or key in categories
+        }
         log.debug("data_categories dict filtered: %s", data_categories.keys())
 
     # filter categories if ckan config is set

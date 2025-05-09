@@ -38,11 +38,7 @@ def get_redis_key(name: str) -> str:
     """
     Generate a Redis key by combining a prefix, the provided name, and a suffix.
     """
-    return (
-        config.selfinfo_get_redis_prefix()
-        + name
-        + config.SELFINFO_REDIS_SUFFIX
-    )
+    return config.selfinfo_get_redis_prefix() + name + config.SELFINFO_REDIS_SUFFIX
 
 
 def get_python_modules_info(force_reset: bool = False) -> dict[str, Any]:
@@ -72,10 +68,14 @@ def get_python_modules_info(force_reset: bool = False) -> dict[str, Any]:
                 is_stale = True
                 if updated_time:
                     updated_time = updated_time.decode("utf-8")  # type: ignore
-                    is_stale = ((now - float(updated_time)) > config.STORE_TIME)
+                    is_stale = (now - float(updated_time)) > config.STORE_TIME
                 if is_stale or force_reset:
-                    log.debug("Updating module: %s due to isStale: %s, Force: %s",
-                              module, is_stale, force_reset)
+                    log.debug(
+                        "Updating module: %s due to isStale: %s, Force: %s",
+                        module,
+                        is_stale,
+                        force_reset,
+                    )
                     data["latest_version"] = get_lib_latest_version(module)
                     for key in data:
                         if data[key] != redis.hget(redis_module_key, key):
@@ -98,7 +98,7 @@ def get_python_modules_info(force_reset: bool = False) -> dict[str, Any]:
     return groups
 
 
-def get_freeze() -> dict[str, 'str|list[str]']:
+def get_freeze() -> dict[str, "str|list[str]"]:
     try:
         from pip._internal.operations import freeze
     except ImportError:  # pip < 10.0
@@ -191,7 +191,7 @@ def get_platform_info() -> dict[str, Any]:
     }
 
 
-def gather_git_info() -> dict[str, 'dict[str, Any]|list[dict[str, Any]]']:
+def gather_git_info() -> dict[str, "dict[str, Any]|list[dict[str, Any]]"]:
     ckan_repos_path = config.selfinfo_get_repos_path()
     git_info = {"repos_info": [], "access_errors": {}}
     if ckan_repos_path:
@@ -264,7 +264,7 @@ def get_git_repo(path: str) -> Optional[git.Repo]:
 
 
 def retrieve_errors() -> list[dict[str, Any]]:
-    """ Collection from function SelfinfoErrorHandler"""
+    """Collection from function SelfinfoErrorHandler"""
     redis: Redis = connect_to_redis()
     key = get_redis_key("errors")
     data = []
@@ -424,7 +424,7 @@ def get_status_show():
     return tk.get_action("status_show")({}, {})
 
 
-def get_ckan_queues() -> dict[str, dict[str, 'str|list[dict[str, Any]]']]:
+def get_ckan_queues() -> dict[str, dict[str, "str|list[dict[str, Any]]"]]:
     data = {}
     for queue in jobs.get_all_queues():
         jobs_counts = queue.count
@@ -521,6 +521,15 @@ def selfinfo_internal_ip_keys() -> list[str]:
     return [
         i.decode("utf-8") for i in redis.scan_iter(match="selfinfo_duplicated_env_*")
     ]
+
+
+def selfinfo_delete_redis_key(key):
+    if not key.startswith("selfinfo_"):
+        return False
+    redis: Redis = connect_to_redis()
+    selfinfo_key = key
+    redis.delete(selfinfo_key)
+    return True
 
 
 CATEGORIES = {

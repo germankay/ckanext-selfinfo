@@ -10,6 +10,7 @@ from . import cli
 @tk.blanket.cli(cli.get_commands)
 @tk.blanket.actions(action.get_actions)
 @tk.blanket.blueprints
+@tk.blanket.helpers
 class SelfinfoPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
 
