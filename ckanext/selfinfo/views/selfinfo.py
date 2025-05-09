@@ -52,15 +52,14 @@ class SelfinfoView(MethodView):
             additional_keys.extend(utils.selfinfo_internal_ip_keys())
 
         additional_keys.extend(
-            [
-                "selfinfo_" + key
-                for key in config.selfinfo_get_additional_redis_keys()
-            ]
+            ["selfinfo_" + key for key in config.selfinfo_get_additional_redis_keys()]
         )
 
         if additional_keys:
             for key in additional_keys:
-                profiles[key] = utils.retrieve_additional_selfinfo_by_keys(key)
+                key_data = utils.retrieve_additional_selfinfo_by_keys(key)
+                if key_data:
+                    profiles[key] = key_data
 
         return tk.render(
             "selfinfo/index.html",
@@ -112,6 +111,37 @@ def selfinfo_get_ram():
     html += "</div></td>"
     html += "</tr>"
     return html
+
+
+@selfinfo.route("/selfinfo/delete-profile", methods=["POST"])
+def selfinfo_delete_profile():
+    profile = tk.request.form.get("profile")
+
+    if profile:
+        try:
+            context: types.Context = cast(
+                types.Context,
+                {
+                    "model": model,
+                    "user": tk.current_user.name,
+                    "auth_user_obj": tk.current_user,
+                },
+            )
+
+            tk.check_access("sysadmin", context)
+        except tk.NotAuthorized:
+            tk.abort(404)
+
+        deleted = tk.get_action("selfinfo_delete_profile")(
+            context, {"profile": profile}
+        )
+
+        if deleted:
+            return "Deleted. After page reload it wont be shown."
+        else:
+            return "Couldn't delete the profile, please check if such key exists."
+
+    return "Missing Profile key, restart the page to view the content."
 
 
 selfinfo.add_url_rule(

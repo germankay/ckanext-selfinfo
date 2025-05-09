@@ -41,8 +41,10 @@ class TestUPDATE:
             config.selfinfo_get_main_action_name()
         )(context, {})
         assert "python_modules" in selfinfo, selfinfo.keys()
-        assert "ckan" in selfinfo["python_modules"], selfinfo['python_modules'].keys()
-        assert "ckan" in selfinfo["python_modules"]["ckan"], selfinfo['python_modules']['ckan'].keys()
+        assert "ckan" in selfinfo["python_modules"], selfinfo["python_modules"].keys()
+        assert "ckan" in selfinfo["python_modules"]["ckan"], selfinfo["python_modules"][
+            "ckan"
+        ].keys()
 
         ckan_info = selfinfo["python_modules"]["ckan"]["ckan"]
 

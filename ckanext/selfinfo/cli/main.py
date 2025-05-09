@@ -116,7 +116,8 @@ def write_selfinfo_duplicated_env():
 
 @click.argument("key", required=True)
 def delete_selfinfo_redis_key(key: str):
-    redis: Redis = connect_to_redis()
-    selfinfo_key = "selfinfo_" + key
-    redis.delete(selfinfo_key)
+    resp = utils.selfinfo_delete_redis_key(key)
+    if not resp:
+        click.echo("This is not an selfinfo key.")
+        raise click.Abort()
     click.echo(f"Deleted Selfinfo data under '{key}' key.")
