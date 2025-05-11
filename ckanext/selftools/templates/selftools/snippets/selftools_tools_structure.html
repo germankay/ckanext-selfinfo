@@ -1,0 +1,17 @@
+<ul class="nav nav-pills nav-fill border border-primary rounded mb-3" id="pills-tab" role="tablist">
+    {% for tool in topic.tools %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold rounded-0 {% if loop.index == 1 %} active {% endif %}" id="{{topic.key}}-{{tool.key}}-tab" data-bs-toggle="pill" data-bs-target="#{{topic.key}}-{{tool.key}}-content" type="button" role="tab">
+                {{ tool.label }}
+            </button>
+        </li>
+    {% endfor %}
+</ul>
+
+<div class="tab-content d-block">
+    {% for tool in topic.tools %}
+        <div class="tab-pane fade {% if loop.index == 1 %} show active {% endif %}" id="{{topic.key}}-{{tool.key}}-content" role="tabpanel" aria-labelledby="selfinfo-plugin-tab">
+            {% snippet tool.snippet, tool=tool, topic=topic, extras=extras %}
+        </div>
+    {% endfor %}
+</div>

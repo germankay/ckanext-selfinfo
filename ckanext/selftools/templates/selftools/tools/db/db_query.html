@@ -1,0 +1,26 @@
+{% import 'macros/form.html' as form %}
+
+<div class="">
+    <form class="form-control border-0 shadow-none p-0" hx-post="/selftools/db-query" hx-trigger="submit" hx-target="#db-query-resp" hx-swap="innerHTML">
+        <div>
+            {{ form.select('model', label=_('Model'), options=extras.model_options, error='') }}
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <label for="solr_q">Field</label>
+                <input type="text" name="field" id="solr_q" class="form-control">                
+            </div>
+            <div class="col-lg-6">
+                <label for="value">Value</label>
+                <input type="text" name="value" id="solr_q" class="form-control">                
+            </div>
+        </div>
+        <div class="mt-3">
+            <label for="limit">Limit</label>
+            <input type="number" name="limit" min="1" max="100" step="1" value="100" class=""  required />
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Submit</button>
+    </form>
+</div>
+
+<div id="db-query-resp" class="bg-light p-3 border rounded mt-3">Output here...</div>
