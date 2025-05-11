@@ -1,0 +1,15 @@
+<div class="">
+    <div class="d-flex align-items-center mb-3">
+        <a target="_blank" class="me-3"
+            href="https://solr.apache.org/guide/solr/latest/query-guide/query-syntax-and-parsers.html">{{ _('Solr Query
+            Syntax') }}</a>
+        <a target="_blank" href="https://solr.apache.org/">{{ _('Documentation') }}</a>
+    </div>
+    <form class="form-control border-0 shadow-none p-0" hx-post="/selftools/solr-query" hx-trigger="submit" hx-target="#solr-query-resp" hx-swap="innerHTML">
+        <label for="message">Query</label>
+        <input type="text" name="q" id="solr_q" class="form-control" required value="q=*:*">
+        <button type="submit" class="btn btn-primary mt-2">Submit</button>
+    </form>
+</div>
+
+<div id="solr-query-resp" class="bg-light p-3 border rounded mt-3">Output here...</div>

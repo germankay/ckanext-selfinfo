@@ -1,0 +1,5 @@
+version: 1
+groups:
+    - annotation: selftools configuration
+      options:
+          - key: ckan.selftools.secret
