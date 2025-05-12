@@ -22,7 +22,7 @@ class SelfinfoErrorHandler(logging.Handler):
             if not redis.exists(redis_key):
                 redis.set(redis_key, json.dumps([]))
 
-            errors = json.loads(redis.get(redis_key))
+            errors = json.loads(redis.get(redis_key))  # pyright: ignore
             errors_limit = selfinfo_get_errors_limit()
             if len(errors) >= errors_limit:
                 start_key = len(errors) - errors_limit + 1
