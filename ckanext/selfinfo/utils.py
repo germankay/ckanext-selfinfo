@@ -7,7 +7,7 @@ import psutil
 from psutil._common import bytes2human
 import platform
 import git
-from git.exc import InvalidGitRepositoryError
+from git.exc import InvalidGitRepositoryError, NoSuchPathError
 from datetime import datetime
 import importlib_metadata as imetadata
 import logging
@@ -256,7 +256,7 @@ def get_git_repo(path: str) -> Optional[git.Repo]:
     repo = None
     try:
         repo = git.Repo(path)
-    except InvalidGitRepositoryError:
+    except (InvalidGitRepositoryError, NoSuchPathError):
         log.debug("Git Collection failed", exc_info=True)
         pass
 
@@ -523,7 +523,7 @@ def selfinfo_internal_ip_keys() -> list[str]:
     ]
 
 
-def selfinfo_delete_redis_key(key):
+def selfinfo_delete_redis_key(key: str) -> bool:
     if not key.startswith("selfinfo_"):
         return False
     redis: Redis = connect_to_redis()
