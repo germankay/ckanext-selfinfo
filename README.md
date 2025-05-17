@@ -16,7 +16,7 @@ Selftools plugin is now available for ckanext-selfinfo.
 
 It is designed to do different sort of operations with SOLR/DB/Redis Data, for example Search within the DB using UI, update records in DB, SOLR search, index Dataset within UI, CKAN config query and more.
 
-You can find more details on what it does and what it needed for in [Awesome README](https://datashades.github.io/ckanext-selfinfo/selftools/overview/).
+You can find more details on what it does and what it needed for in [here](https://datashades.github.io/ckanext-selfinfo/selftools/overview/).
 
 ## Requirements
 
