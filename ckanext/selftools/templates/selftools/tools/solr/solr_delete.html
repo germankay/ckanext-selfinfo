@@ -8,7 +8,12 @@
             <label for="ds_id">Dataset Name/ID</label>
             <input type="text" name="id" id="ds_id" class="form-control" required>
         </div>
-        <button type="submit" class="btn btn-primary mt-2">Delete</button>
+
+        <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#solr-delete-confirmation">
+            Delete
+        </button>
+
+        {% snippet "selftools/snippets/confirmation.html", modal_id='solr-delete-confirmation', modal_label_id='solr-delete-label-id' %}
     </form>
 </div>
 

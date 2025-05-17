@@ -4,6 +4,7 @@ selfinfo-js:
   contents:
     - js/reset-module-last-check.js
     - js/search-through-content.js
+    - js/search-through-table.js
   extra:
     preload:
       - base/main
