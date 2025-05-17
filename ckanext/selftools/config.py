@@ -8,6 +8,7 @@ SELFTOOLS_OPERATIONS_PWD = "ckan.selftools.opetations_pwd"
 SELFTOOLS_OPERATIONS_LIMIT = "ckan.selftools.operations_limit"
 SELFTOOLS_CONFIG_BLACKLIST = "ckan.selftools.config_blacklist"
 SELFTOOLS_TOOLS_BLACKLIST = "ckan.selftools.tools_blacklist"
+SELFTOOLS_MODEL_FIELDS_BLACKLIST = "ckan.selftools.model_fields_blacklist"
 
 
 def selftools_get_categories_list():
@@ -28,3 +29,7 @@ def selftools_get_config_blacklist():
 
 def selftools_get_tools_blacklist():
     return tk.config.get(SELFTOOLS_TOOLS_BLACKLIST)
+
+
+def selftools_get_model_fields_blacklist():
+    return tk.config.get(SELFTOOLS_MODEL_FIELDS_BLACKLIST)

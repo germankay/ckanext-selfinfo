@@ -15,3 +15,6 @@ groups:
           - key: ckan.selftools.tools_blacklist
             type: list
             default: ''
+          - key: ckan.selftools.model_fields_blacklist
+            type: list
+            default: ''
