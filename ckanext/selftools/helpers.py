@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-import ckan.plugins.toolkit as tk
-
-import ckanext.selftools.utils as utils
+from ckanext.selftools import utils, config
 
 
-def selftools_tools():
-    return utils.SELFTOOLS_TOOLS
+def selftools_categories():
+    return utils.get_selftools_categories()
 
 
 def selftools_get_db_model_options():
@@ -29,3 +27,11 @@ def selftools_get_db_row_values(row, columns):
             values.append("")
 
     return values
+
+
+def get_operations_limit():
+    return config.selftools_get_operations_limit()
+
+
+def check_operations_pwd_set():
+    return True if config.selftools_get_operations_pwd() else False

@@ -3,6 +3,14 @@ from __future__ import annotations
 import logging
 
 import ckan.model as model
+import ckan.plugins as p
+
+from ckanext.selftools import interfaces
+from ckanext.selftools.config import (
+    selftools_get_operations_pwd,
+    selftools_get_categories_list,
+    selftools_get_tools_blacklist,
+)
 
 log = logging.getLogger(__name__)
 
@@ -44,6 +52,38 @@ SELFTOOLS_TOOLS = [
             },
         ],
     },
+    {
+        "key": "redis",
+        "label": "Redis",
+        "tools": [
+            {
+                "key": "redis_query",
+                "label": "Query",
+                "snippet": "/selftools/tools/redis/redis_query.html",
+            },
+            {
+                "key": "redis_update",
+                "label": "Update/Create",
+                "snippet": "/selftools/tools/redis/redis_update.html",
+            },
+            {
+                "key": "redis_delete",
+                "label": "Delete",
+                "snippet": "/selftools/tools/redis/redis_delete.html",
+            },
+        ],
+    },
+    {
+        "key": "config",
+        "label": "Config",
+        "tools": [
+            {
+                "key": "config_query",
+                "label": "Query",
+                "snippet": "/selftools/tools/config/config_query.html",
+            },
+        ],
+    },
 ]
 
 
@@ -59,9 +99,48 @@ def get_db_models():
             model.Member,
             model.PackageMember,
             model.Vocabulary,
+            model.SystemInfo,
         ]
+
+        # models modification
+        for item in p.PluginImplementations(interfaces.ISelftools):
+            item.selftools_db_models(models)
+
         return [{"label": model.__name__, "model": model} for model in models]
     except Exception:
         log.error("Cannot retrieve DB Models.")
 
     return []
+
+
+def get_selftools_categories():
+    tools_blacklist = selftools_get_tools_blacklist()
+
+    def _filter_tools(category):
+        tools = category.get("tools")
+        if tools_blacklist and tools:
+            for tb in tools_blacklist:
+                tb = tb.strip().split(".")
+                if category["key"] == tb[0]:
+                    tools = [t for t in tools if t["key"] != tb[1]]
+            category["tools"] = tools
+        return category
+
+    categories = [
+        _filter_tools(c)
+        for c in SELFTOOLS_TOOLS
+        if c["key"] in selftools_get_categories_list()
+    ]
+
+    return categories
+
+
+def selftools_verify_operations_pwd(pwd):
+    config_pwd = selftools_get_operations_pwd()
+    if not config_pwd:
+        return True
+
+    if config_pwd and pwd and (config_pwd == pwd):
+        return True
+
+    return False

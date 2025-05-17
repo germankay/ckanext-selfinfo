@@ -1,19 +1,19 @@
-{% set selftools_tools = h.selftools_tools() %}
+{% set selftools_categories = h.selftools_categories() %}
 
 <nav class="mb-3">
     <ul class="nav nav-pills nav-fill border border-primary rounded mb-3" id="selftools-tab" role="tablist">
-        {% for topic in selftools_tools %}
+        {% for category in selftools_categories %}
             <li class="nav-item" role="presentation">
-                <button href="#nav-{{ topic.key }}-selftools" class="nav-link fw-bold rounded-0 {% if loop.index == 1 %} active {% endif %}" id="nav-{{ topic.key }}-selftools-tab" data-bs-toggle="tab" data-bs-target="#nav-{{ topic.key }}-selftools" role="tab" aria-controls="nav-{{ topic.key }}-selftools" aria-selected="true">{{ topic.label }}</button>
+                <button href="#nav-{{ category.key }}-selftools" class="nav-link fw-bold rounded-0 {% if loop.index == 1 %} active {% endif %}" id="nav-{{ category.key }}-selftools-tab" data-bs-toggle="tab" data-bs-target="#nav-{{ category.key }}-selftools" role="tab" aria-controls="nav-{{ category.key }}-selftools" aria-selected="true">{{ category.label }}</button>
             </li>
         {% endfor %}
     </ul>
 </nav>
 <div class="tab-content d-block" id="nav-selftools-data">
-    {% for topic in selftools_tools %}
-        <div class="tab-pane fade {% if loop.index == 1 %} show active {% endif %}" id="nav-{{ topic.key }}-selftools" role="tabpanel" aria-labelledby="nav-{{ topic.key }}-selftools-tab">
+    {% for category in selftools_categories %}
+        <div class="tab-pane fade {% if loop.index == 1 %} show active {% endif %}" id="nav-{{ category.key }}-selftools" role="tabpanel" aria-labelledby="nav-{{ category.key }}-selftools-tab">
             {% set extras = {} %}
-            {% snippet "selftools/snippets/selftools_{}.html".format(topic.key), topic=topic, extras=extras %}
+            {% snippet "selftools/snippets/selftools_{}.html".format(category.key), category=category, extras=extras %}
         </div>
     {% endfor %}
 </div>

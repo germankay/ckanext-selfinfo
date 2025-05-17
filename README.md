@@ -10,6 +10,14 @@ On CKAN admin page `/ckan-admin/selfinfo` can see a big variety of information s
 
 Check full [documentation](https://datashades.github.io/ckanext-selfinfo/) for more information.
 
+## Selftools (new)
+
+Selftools plugin is now available for ckanext-selfinfo.
+
+It is designed to do different sort of operations with SOLR/DB/Redis Data, for example Search within the DB using UI, update records in DB, SOLR search, index Dataset within UI, CKAN config query and more.
+
+You can find more details on what it does and what it needed for in [Awesome README](https://datashades.github.io/ckanext-selfinfo/selftools/overview/).
+
 ## Requirements
 
 Compatibility with core CKAN versions:
