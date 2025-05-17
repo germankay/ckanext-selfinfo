@@ -4,6 +4,7 @@ import requests
 import logging
 import json
 from sqlalchemy import desc, exc as sql_exceptions
+from sqlalchemy.inspection import inspect
 import redis
 from typing import Any, Literal
 
@@ -141,7 +142,7 @@ def selftools_db_query(
 
                 results = q.all()
 
-                columns = [col.name for col in model_class.__table__.columns]
+                columns = [col.name for col in inspect(model_class).c]
 
                 structured_results = [
                     _get_db_row_values(row, columns) for row in results
@@ -152,12 +153,7 @@ def selftools_db_query(
                     "results": structured_results,
                     "fields": columns,
                 }
-            except AttributeError:
-                return {
-                    "success": False,
-                    "message": f"There no attribute '{field}' in '{curr_model[0]['label']}'",
-                }
-            except sql_exceptions.CompileError as e:
+            except (AttributeError, sql_exceptions.CompileError) as e:
                 return {
                     "success": False,
                     "message": str(e),
