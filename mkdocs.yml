@@ -29,6 +29,16 @@ nav:
         - Overview:  profiles/duplicated_env.md
         - Shared Categories: profiles/shared_categories.md
   - Extending Selfinfo: extending/overview.md
+  - Selftools:
+    - Overview: selftools/overview.md
+    - Confiruation: selftools/configuration.md
+    - Categories:
+      - Solr: selftools/categories/solr.md
+      - DB: selftools/categories/db.md
+      - Redis: selftools/categories/redis.md
+      - Config: selftools/categories/config.md
+    - Config Settings: selftools/config_settings.md
+    - Extending Selftools: selftools/extending_selftools.md
 
 
 markdown_extensions:
