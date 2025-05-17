@@ -103,12 +103,20 @@ def selftools_db_query(
     order = data_dict.get("order")
     order_by = data_dict.get("order_by")
     if q_model:
+        model_fields_blacklist = [
+            b.strip().split(".") for b in config.selftools_get_model_fields_blacklist()
+        ]
+        combained_blacklist = [
+            *model_fields_blacklist,
+            *[["User", "password"], ["User", "apikey"]],
+        ]
 
-        def _get_db_row_values(row: Any, columns: Any) -> list[Any]:
+        def _get_db_row_values(row: Any, columns: Any, model_name: str) -> list[Any]:
             values = []
-            whitelist_fields = ["password", "apikey"]
             for col in columns:
-                if col in whitelist_fields:
+                if [
+                    b for b in combained_blacklist if b[0] == model_name and col == b[1]
+                ]:
                     value = "SECURE"
                 else:
                     value = getattr(row, col, None)
@@ -145,7 +153,8 @@ def selftools_db_query(
                 columns = [col.name for col in inspect(model_class).c]
 
                 structured_results = [
-                    _get_db_row_values(row, columns) for row in results
+                    _get_db_row_values(row, columns, curr_model[0]["label"])
+                    for row in results
                 ]
 
                 return {
