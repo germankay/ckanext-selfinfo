@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 
+from typing import Any
 import ckan.model as model
 import ckan.plugins as p
 
@@ -87,7 +88,7 @@ SELFTOOLS_TOOLS = [
 ]
 
 
-def get_db_models():
+def get_db_models() -> list[dict[str, Any]]:
     try:
         models = [
             model.Package,
@@ -110,13 +111,13 @@ def get_db_models():
     except Exception:
         log.error("Cannot retrieve DB Models.")
 
-    return []
+    return [{}]
 
 
-def get_selftools_categories():
+def get_selftools_categories() -> list[dict[str, Any]]:
     tools_blacklist = selftools_get_tools_blacklist()
 
-    def _filter_tools(category):
+    def _filter_tools(category: dict[str, Any]) -> dict[str, Any]:
         tools = category.get("tools")
         if tools_blacklist and tools:
             for tb in tools_blacklist:
@@ -135,7 +136,7 @@ def get_selftools_categories():
     return categories
 
 
-def selftools_verify_operations_pwd(pwd):
+def selftools_verify_operations_pwd(pwd: str | None) -> bool:
     config_pwd = selftools_get_operations_pwd()
     if not config_pwd:
         return True
