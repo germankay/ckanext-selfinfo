@@ -327,7 +327,7 @@ def ckan_bluprints() -> dict[str, list[dict[str, Any]]]:
     app = current_app
     data = {}
     try:
-        for name in app.blueprints.items():
+        for name, _ in app.blueprints.items():
             data[name] = []
             for rule in current_app.url_map.iter_rules():
                 if rule.endpoint.startswith(f"{name}."):
