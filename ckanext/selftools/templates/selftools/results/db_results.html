@@ -24,7 +24,7 @@
         <tbody>
           {% for row in data.results %}
             <tr>
-                {% for val in h.selftools_get_db_row_values(row, data.fields) %}
+                {% for val in row %}
                     <td>{{ val }}</td>
                 {% endfor %}
             </tr>

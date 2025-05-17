@@ -5,7 +5,9 @@ import logging
 import json
 from sqlalchemy import desc, exc as sql_exceptions
 import redis
+from typing import Any, Literal
 
+from ckan import types
 import ckan.model as model
 import ckan.plugins.toolkit as tk
 from ckan.lib.search.common import (
@@ -20,7 +22,9 @@ from ckanext.selftools import utils, config
 log = logging.getLogger(__name__)
 
 
-def selftools_solr_query(context, data_dict):
+def selftools_solr_query(
+    context: types.Context, data_dict: dict[str, Any]
+) -> dict[str, Any] | Literal[False]:
     tk.check_access("sysadmin", context, data_dict)
 
     if solr_available():
@@ -42,7 +46,9 @@ def selftools_solr_query(context, data_dict):
     return False
 
 
-def selftools_solr_delete(context, data_dict):
+def selftools_solr_delete(
+    context: types.Context, data_dict: dict[str, Any]
+) -> dict[str, Any]:
     tk.check_access("sysadmin", context, data_dict)
 
     if not utils.selftools_verify_operations_pwd(data_dict.get("selftools_pwd")):
@@ -56,7 +62,9 @@ def selftools_solr_delete(context, data_dict):
     return {"success": True}
 
 
-def selftools_solr_index(context, data_dict):
+def selftools_solr_index(
+    context: types.Context, data_dict: dict[str, Any]
+) -> dict[str, Any]:
     tk.check_access("sysadmin", context, data_dict)
     id = data_dict.get("id")
     ids = data_dict.get("ids")
@@ -82,7 +90,9 @@ def selftools_solr_index(context, data_dict):
     return {"success": True}
 
 
-def selftools_db_query(context, data_dict):
+def selftools_db_query(
+    context: types.Context, data_dict: dict[str, Any]
+) -> dict[str, Any] | Literal[False]:
     tk.check_access("sysadmin", context, data_dict)
 
     q_model = data_dict.get("model")
@@ -92,6 +102,23 @@ def selftools_db_query(context, data_dict):
     order = data_dict.get("order")
     order_by = data_dict.get("order_by")
     if q_model:
+
+        def _get_db_row_values(row: Any, columns: Any) -> list[Any]:
+            values = []
+            whitelist_fields = ["password", "apikey"]
+            for col in columns:
+                if col in whitelist_fields:
+                    value = "SECURE"
+                else:
+                    value = getattr(row, col, None)
+
+                if value is not None:
+                    values.append(value)
+                else:
+                    values.append("")
+
+            return values
+
         models = utils.get_db_models()
         curr_model = [m for m in models if m["label"] == q_model]
 
@@ -114,10 +141,16 @@ def selftools_db_query(context, data_dict):
 
                 results = q.all()
 
+                columns = [col.name for col in model_class.__table__.columns]
+
+                structured_results = [
+                    _get_db_row_values(row, columns) for row in results
+                ]
+
                 return {
                     "success": True,
-                    "results": results,
-                    "fields": [col.name for col in model_class.__table__.columns],
+                    "results": structured_results,
+                    "fields": columns,
                 }
             except AttributeError:
                 return {
@@ -132,7 +165,9 @@ def selftools_db_query(context, data_dict):
     return False
 
 
-def selftools_db_update(context, data_dict):
+def selftools_db_update(
+    context: types.Context, data_dict: dict[str, Any]
+) -> dict[str, Any]:
     tk.check_access("sysadmin", context, data_dict)
 
     if not utils.selftools_verify_operations_pwd(data_dict.get("selftools_pwd")):
@@ -167,13 +202,13 @@ def selftools_db_update(context, data_dict):
                 # First filter and limit results
                 q = model.Session.query(primary_key)
 
-                if field and value:
+                if where_field and where_value:
                     q = q.filter(getattr(model_class, where_field) == where_value)
 
                 if limit:
                     q = q.limit(int(limit))
 
-                if where_field and where_value:
+                if field and value:
                     ids = [i[0] for i in q.all()]
                     # Update already limited results
                     upd = (
@@ -201,10 +236,12 @@ def selftools_db_update(context, data_dict):
     return {"success": False}
 
 
-def selftools_redis_query(context, data_dict):
+def selftools_redis_query(
+    context: types.Context, data_dict: dict[str, Any]
+) -> dict[str, Any] | Literal[False]:
     tk.check_access("sysadmin", context, data_dict)
 
-    def _redis_key_value(redis_conn, key):
+    def _redis_key_value(redis_conn: Any, key: str):
         key_type = redis_conn.type(key).decode("utf-8")
         val = ""
         try:
@@ -214,7 +251,7 @@ def selftools_redis_query(context, data_dict):
                 val = redis_conn.hgetall(key)
             else:
                 val = f"<Unsupported type: {key_type}>"
-        except redis.exceptions.RedisError as e:
+        except redis.exceptions.RedisError as e:  # pyright: ignore
             val = f"<Error: {str(e)}>"
 
         return val
@@ -225,11 +262,11 @@ def selftools_redis_query(context, data_dict):
     if q:
         keys = redis_conn.keys(f"*{q}*")
         max_limit = config.selftools_get_operations_limit()
-        keys = keys[:max_limit]
+        keys = keys[:max_limit]  # pyright: ignore
         redis_results = [
             {
                 "key": k.decode("utf-8"),
-                "type": redis_conn.type(k).decode("utf-8"),
+                "type": redis_conn.type(k).decode("utf-8"),  # pyright: ignore
                 "value": str(_redis_key_value(redis_conn, k)),
             }
             for k in keys
@@ -239,7 +276,9 @@ def selftools_redis_query(context, data_dict):
     return False
 
 
-def selftools_redis_update(context, data_dict):
+def selftools_redis_update(
+    context: types.Context, data_dict: dict[str, Any]
+) -> dict[str, Any]:
     tk.check_access("sysadmin", context, data_dict)
 
     if not utils.selftools_verify_operations_pwd(data_dict.get("selftools_pwd")):
@@ -255,7 +294,9 @@ def selftools_redis_update(context, data_dict):
     return {"success": False}
 
 
-def selftools_redis_delete(context, data_dict):
+def selftools_redis_delete(
+    context: types.Context, data_dict: dict[str, Any]
+) -> dict[str, Any]:
     tk.check_access("sysadmin", context, data_dict)
 
     if not utils.selftools_verify_operations_pwd(data_dict.get("selftools_pwd")):
@@ -271,7 +312,9 @@ def selftools_redis_delete(context, data_dict):
     return {"success": False}
 
 
-def selftools_config_query(context, data_dict):
+def selftools_config_query(
+    context: types.Context, data_dict: dict[str, Any]
+) -> dict[str, Any]:
     tk.check_access("sysadmin", context, data_dict)
 
     if not utils.selftools_verify_operations_pwd(data_dict.get("selftools_pwd")):
