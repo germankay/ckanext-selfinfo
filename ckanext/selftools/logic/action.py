@@ -60,7 +60,7 @@ def selftools_solr_delete(
     # if not pkg:
     #     return {"success": False}
 
-    clear(data_dict.get("id"))
+    clear(data_dict.get("id", ""))
     return {"success": True}
 
 
