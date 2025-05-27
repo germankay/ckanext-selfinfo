@@ -82,6 +82,7 @@ def get_selfinfo():
 @click.argument("key", required=True)
 @click.argument("label", required=False)
 def write_selfinfo(key: str, label: str):
+    expire_time = config.selfinfo_get_additional_profiles_expire_time()
     data = tk.get_action(config.selfinfo_get_main_action_name())(
         {"ignore_auth": True}, {}
     )
@@ -89,11 +90,17 @@ def write_selfinfo(key: str, label: str):
     data["provided_on"] = datetime.utcnow().timestamp()
     redis: Redis = connect_to_redis()
     selfinfo_key = "selfinfo_" + key
-    redis.set(selfinfo_key, json.dumps(data))
+
+    if expire_time:
+        redis.set(selfinfo_key, json.dumps(data), ex=expire_time)
+    else:
+        redis.set(selfinfo_key, json.dumps(data))
+
     click.echo(f"Stored Selfinfo data under '{key}' key.")
 
 
 def write_selfinfo_duplicated_env():
+    expire_time = config.selfinfo_get_additional_profiles_expire_time()
     internal_ip = utils.selfinfo_retrieve_internal_ip()
     data = tk.get_action(config.selfinfo_get_main_action_name())(
         {"ignore_auth": True}, {}
@@ -110,7 +117,12 @@ def write_selfinfo_duplicated_env():
 
     redis: Redis = connect_to_redis()
     selfinfo_key = "selfinfo_duplicated_env_" + internal_ip.replace(".", "_")
-    redis.set(selfinfo_key, json.dumps(data))
+
+    if expire_time:
+        redis.set(selfinfo_key, json.dumps(data), ex=expire_time)
+    else:
+        redis.set(selfinfo_key, json.dumps(data))
+
     click.echo(f"Stored Selfinfo data under '{selfinfo_key}' key.")
 
 

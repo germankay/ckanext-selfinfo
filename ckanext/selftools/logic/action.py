@@ -55,11 +55,12 @@ def selftools_solr_delete(
     if not utils.selftools_verify_operations_pwd(data_dict.get("selftools_pwd")):
         return {"success": False, "message": "Unauthorized action."}
 
-    pkg = model.Package.get(data_dict.get("id"))
-    if not pkg:
-        return {"success": False}
+    # Really need to check? It can be not only Datasets
+    # pkg = model.Package.get(data_dict.get("id"))
+    # if not pkg:
+    #     return {"success": False}
 
-    clear(pkg.id)
+    clear(data_dict.get("id"))
     return {"success": True}
 
 

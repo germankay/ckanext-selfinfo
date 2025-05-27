@@ -14,6 +14,8 @@ Then enable `ckan.selfinfo.duplicated_envs.mode` by setting it to `true` value.
 
 Now while opening the Selfinfo page, instead of `default` profile, there will be one or multiple profiles per each Env that is currently active.
 
+Additionally you can set `ckan.selfinfo.additional_profiles_expire_time` to specify how long the profiles will live. This is needed to have an old profiles to be deleted automatically after certain amount of time, when they are not being updated. Otherwise, you can manually delete an old profile from the UI.
+
 ![Duplicated Env Profile](../assets/duplicated_env.png)
 
 Example of Cron job, running every 10 minutes:
