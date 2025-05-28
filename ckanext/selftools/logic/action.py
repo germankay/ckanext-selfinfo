@@ -262,6 +262,15 @@ def selftools_redis_query(
 
         return val
 
+    def _safe_key_display(k: bytes) -> str:
+        try:
+            # Check for binary prefix or signs of pickled data
+            if any(s in repr(k) for s in [r'\x80', r'\x00']):
+                return repr(k)
+            return k.decode("utf-8")
+        except UnicodeDecodeError:
+            return repr(k)
+
     redis_conn: Redis = connect_to_redis()
 
     q = data_dict.get("q", "")
@@ -271,7 +280,7 @@ def selftools_redis_query(
         keys = keys[:max_limit]  # pyright: ignore
         redis_results = [
             {
-                "key": k.decode("utf-8"),
+                "key": _safe_key_display(k),
                 "type": redis_conn.type(k).decode("utf-8"),  # pyright: ignore
                 "value": str(_redis_key_value(redis_conn, k)),
             }
