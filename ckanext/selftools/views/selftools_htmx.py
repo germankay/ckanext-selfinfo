@@ -76,7 +76,7 @@ def selftools_solr_delete() -> Any | str:
         return (
             resp["message"]
             if resp.get("message")
-            else _("Couldn't delete index. No such Dataset.")
+            else _("Couldn't delete index.")
         )
     else:
         return _("Deleted.")

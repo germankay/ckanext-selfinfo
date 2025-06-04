@@ -39,3 +39,6 @@ groups:
             type: list
           - key: ckan.selfinfo.solr_schema_filename
             description: Filename that Solr is using for CKAN Solr Schema. For example managed-schema or schema.xml.
+          - key: ckan.selfinfo.additional_profiles_expire_time
+            type: int
+            default: 0

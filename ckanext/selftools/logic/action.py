@@ -55,11 +55,12 @@ def selftools_solr_delete(
     if not utils.selftools_verify_operations_pwd(data_dict.get("selftools_pwd")):
         return {"success": False, "message": "Unauthorized action."}
 
-    pkg = model.Package.get(data_dict.get("id"))
-    if not pkg:
-        return {"success": False}
+    # Really need to check? It can be not only Datasets
+    # pkg = model.Package.get(data_dict.get("id"))
+    # if not pkg:
+    #     return {"success": False}
 
-    clear(pkg.id)
+    clear(data_dict.get("id", ""))
     return {"success": True}
 
 
@@ -261,6 +262,15 @@ def selftools_redis_query(
 
         return val
 
+    def _safe_key_display(k: bytes) -> str:
+        try:
+            # Check for binary prefix or signs of pickled data
+            if any(s in repr(k) for s in [r'\x80', r'\x00']):
+                return repr(k)
+            return k.decode("utf-8")
+        except UnicodeDecodeError:
+            return repr(k)
+
     redis_conn: Redis = connect_to_redis()
 
     q = data_dict.get("q", "")
@@ -270,7 +280,7 @@ def selftools_redis_query(
         keys = keys[:max_limit]  # pyright: ignore
         redis_results = [
             {
-                "key": k.decode("utf-8"),
+                "key": _safe_key_display(k),
                 "type": redis_conn.type(k).decode("utf-8"),  # pyright: ignore
                 "value": str(_redis_key_value(redis_conn, k)),
             }
